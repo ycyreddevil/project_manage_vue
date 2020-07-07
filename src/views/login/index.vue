@@ -60,19 +60,16 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
-import SocialSign from './components/SocialSignin'
-
 export default {
   name: 'Login',
-  components: { SocialSign },
+  components: { },
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
+      // if (!validUsername(value)) {
+      //   callback(new Error('Please enter the correct user name'))
+      // } else {
+      callback()
+      // }
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
@@ -124,8 +121,8 @@ export default {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
-    wxlogin(){
-      location.href='https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=wx9f620907462561ca&agentid=1000007&redirect_uri=http://yelioa.top'
+    wxlogin() {
+      location.href = 'https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=wx9f620907462561ca&agentid=1000007&redirect_uri=http://yelioa.top'
     },
     checkCapslock(e) {
       const { key } = e
@@ -150,7 +147,8 @@ export default {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
             })
-            .catch(() => {
+            .catch(res => {
+              console.log(res)
               this.loading = false
             })
         } else {
