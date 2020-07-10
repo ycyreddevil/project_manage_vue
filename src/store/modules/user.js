@@ -7,7 +7,8 @@ const state = {
   name: '',
   avatar: '',
   userId: '',
-  wechatUserId: []
+  wechatUserId: [],
+  role: []
 }
 
 const mutations = {
@@ -25,6 +26,9 @@ const mutations = {
   },
   SET_WECHATUSERID: (state, wechatUserId) => {
     state.wechatUserId = wechatUserId
+  },
+  SET_ROLE: (state, role) => {
+    state.role = role
   }
 }
 
@@ -52,11 +56,12 @@ const actions = {
         if (!result) {
           reject('Verification failed, please Login again.')
         }
-        const { userId, name, avatar, wechatUserId } = result
+        const { userId, name, avatar, wechatUserId, role } = result
         commit('SET_USERID', userId)
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_WECHATUSERID', wechatUserId)
+        commit('SET_ROLE', role)
         resolve(result)
       }).catch(error => {
         reject(error)

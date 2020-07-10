@@ -18,7 +18,7 @@ export function getInfo(token) {
 
 export function getModulesTree(token) {
   return request({
-    url: '/vue-element-admin/user/info',
+    url: '/login/getModulesTree',
     method: 'get',
     params: { token }
   })
@@ -26,7 +26,7 @@ export function getModulesTree(token) {
 
 export function logout() {
   return request({
-    url: '/vue-element-admin/user/logout',
+    url: '/login/logout',
     method: 'post'
   })
 }
