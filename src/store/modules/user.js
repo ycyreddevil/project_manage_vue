@@ -8,7 +8,7 @@ const state = {
   avatar: '',
   userId: '',
   wechatUserId: [],
-  role: [],
+  roles: [],
   modules: []
 }
 
@@ -28,8 +28,8 @@ const mutations = {
   SET_WECHATUSERID: (state, wechatUserId) => {
     state.wechatUserId = wechatUserId
   },
-  SET_ROLE: (state, role) => {
-    state.role = role
+  SET_ROLES: (state, role) => {
+    state.roles = role
   },
   SET_MODULES: (state, modules) => {
     state.modules = modules
@@ -65,7 +65,7 @@ const actions = {
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_WECHATUSERID', wechatUserId)
-        commit('SET_ROLE', role)
+        commit('SET_ROLES', role)
         resolve(result)
       }).catch(error => {
         reject(error)

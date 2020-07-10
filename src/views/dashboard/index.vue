@@ -23,6 +23,9 @@ export default {
     ])
   },
   created() {
+    console.log(this.roles)
+    const _role = this.roles.map(item => { return item.name })
+    console.log(_role)
     if (!this.roles.includes('admin')) {
       this.currentRole = 'editorDashboard'
     }
