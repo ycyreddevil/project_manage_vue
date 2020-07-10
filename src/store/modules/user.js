@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getInfo, getModulesTree } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
@@ -8,7 +8,8 @@ const state = {
   avatar: '',
   userId: '',
   wechatUserId: [],
-  role: []
+  role: [],
+  modules: []
 }
 
 const mutations = {
@@ -29,6 +30,9 @@ const mutations = {
   },
   SET_ROLE: (state, role) => {
     state.role = role
+  },
+  SET_MODULES: (state, modules) => {
+    state.modules = modules
   }
 }
 
@@ -62,6 +66,21 @@ const actions = {
         commit('SET_AVATAR', avatar)
         commit('SET_WECHATUSERID', wechatUserId)
         commit('SET_ROLE', role)
+        resolve(result)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  getModulesTree({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      getModulesTree(state.token).then(response => {
+        const { result } = response
+        if (!result) {
+          reject('Verification failed, please Login again.')
+        }
+        commit('SET_MODULES', result)
         resolve(result)
       }).catch(error => {
         reject(error)

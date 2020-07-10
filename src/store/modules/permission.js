@@ -1,4 +1,5 @@
-import { asyncRoutes, constantRoutes } from '@/router'
+import { constantRoutes } from '@/router'
+import Layout from '@/layout'
 
 /**
  * Use meta.role to determine if the current user has permission
@@ -46,17 +47,44 @@ const mutations = {
   }
 }
 
+const groupRoutes = (data) => {
+  const parentPath = data.item.url
+  const newPath = {
+    path: parentPath || '/',
+    component: data.children && data.children.length > 0 ? Layout : () => import('@/views' + data.item.url.toLowerCase()),
+    meta: {
+      title: data.item.name,
+      sortNo: data.item.sortNo,
+      icon: data.item.iconName
+    },
+    name: data.item.name,
+    hidden: false,
+    children: []
+  }
+  if (data.children && data.children.length > 0) {
+    data.children.forEach(child => {
+      newPath.children.push(groupRoutes(child))
+    })
+  }
+  return newPath
+}
+
 const actions = {
-  generateRoutes({ commit }, roles) {
+  generateRoutes({ commit }, data) {
     return new Promise(resolve => {
-      let accessedRoutes
-      if (roles.includes('admin')) {
-        accessedRoutes = asyncRoutes || []
-      } else {
-        accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
-      }
-      commit('SET_ROUTES', accessedRoutes)
-      resolve(accessedRoutes)
+      (async() => {
+        const accessedRoutes = []
+        await data.modules.forEach((value, index) => {
+          accessedRoutes.push(groupRoutes(value))
+        })
+        // if (roles.includes('admin')) {
+        //   accessedRoutes = asyncRoutes || []
+        // } else {
+        //   accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+        // }
+        commit('SET_ROUTES', accessedRoutes)
+        resolve(accessedRoutes)
+      })()
     })
   }
 }
