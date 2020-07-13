@@ -63,7 +63,7 @@ const groupRoutes = (data) => {
   }
   if (data.children && data.children.length > 0) {
     data.children.forEach(child => {
-      newPath.children.push(groupRoutes(child))
+      newPath.children.push(groupRoutes(child, 'child'))
     })
   }
   return newPath
