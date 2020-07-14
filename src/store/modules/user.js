@@ -1,4 +1,4 @@
-import { login, logout, getInfo, getModulesTree } from '@/api/user'
+import { login, logout, getInfo, getModulesTree, checkToken } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
@@ -51,7 +51,15 @@ const actions = {
       })
     })
   },
-
+  checkToken({ commit }, token) {
+    return new Promise((resolve, reject) => {
+      checkToken({ token: token }).then(response => {
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
@@ -72,7 +80,6 @@ const actions = {
       })
     })
   },
-
   getModulesTree({ commit, state }) {
     return new Promise((resolve, reject) => {
       getModulesTree(state.token).then(response => {

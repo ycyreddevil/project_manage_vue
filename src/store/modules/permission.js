@@ -51,7 +51,7 @@ const groupRoutes = (data) => {
   const parentPath = data.item.url
   const newPath = {
     path: parentPath || '/',
-    component: data.children && data.children.length > 0 ? Layout : () => import('@/views' + data.item.url.toLowerCase()),
+    component: data.children && data.children.length > 0 ? Layout : resolve => require(['@/views' + data.item.url.toLowerCase() + '.vue'], resolve),
     meta: {
       title: data.item.name,
       sortNo: data.item.sortNo,

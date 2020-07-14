@@ -30,3 +30,11 @@ export function logout() {
     method: 'post'
   })
 }
+
+export function checkToken(data) {
+  return request({
+    url: '/login/checkToken',
+    method: 'post',
+    data
+  })
+}

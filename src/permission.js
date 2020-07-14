@@ -15,28 +15,37 @@ router.beforeEach(async(to, from, next) => {
   document.title = getPageTitle(to.meta.title)
   const hasToken = getToken()
   if (hasToken) {
-    if (to.path === '/login') { // 登录后login自动跳转
-      next({ path: '/' })
-      return
-    }
-    if (store.getters.modules.length > 0) {
-      console.log(store.getters.modules)
-      next()
-      return
-    }
-    store.dispatch('user/getInfo').then(res => { // 拉取用户信息
-      store.dispatch('user/getModulesTree').then(modules => { // 获取用户可访问的模块
-        store.dispatch('permission/generateRoutes', { modules }).then(routes => { // 根据权限生成可访问的路由表
-          router.addRoutes(routes) // 动态添加可访问路由表
-          // next()
-          next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
+    store.dispatch('user/checkToken', hasToken).then(res => {
+      const validToken = res.result
+      if (validToken) {
+        if (to.path === '/login') { // 登录后login自动跳转
+          next({ path: '/' })
+          return
+        }
+        if (store.getters.modules.length > 0) {
+          console.log(store.getters.modules)
+          next()
+          return
+        }
+        store.dispatch('user/getInfo').then(res => { // 拉取用户信息
+          store.dispatch('user/getModulesTree').then(modules => { // 获取用户可访问的模块
+            store.dispatch('permission/generateRoutes', { modules }).then(routes => { // 根据权限生成可访问的路由表
+              router.addRoutes(routes) // 动态添加可访问路由表
+              // next()
+              next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
+            })
+          })
+        }).catch((err) => {
+          // store.dispatch('FedLogOut').then(() => {
+          Message.error(err || '获取用户信息失败')
+          next({ path: '/login' })
+          // })
         })
-      })
-    }).catch((err) => {
-      // store.dispatch('FedLogOut').then(() => {
-      Message.error(err || '获取用户信息失败')
-      next({ path: '/login' })
-      // })
+      } else {
+        store.dispatch('user/resetToken').then(res => {
+          next(`/login?redirect=${to.path}`)
+        })
+      }
     })
   } else {
     /* has no token*/
