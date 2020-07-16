@@ -7,3 +7,11 @@ export function findProjects(data) {
     data
   })
 }
+
+export function findProjectMember(params) {
+  return request({
+    url: '/project/findProjectMember',
+    method: 'post',
+    params
+  })
+}
