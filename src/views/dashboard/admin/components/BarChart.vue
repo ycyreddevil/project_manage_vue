@@ -45,7 +45,6 @@ export default {
   methods: {
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
-
       this.chart.setOption({
         tooltip: {
           trigger: 'axis',
@@ -53,8 +52,10 @@ export default {
             type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
           }
         },
+        title: {
+          text: '提交状况'
+        },
         grid: {
-          top: 10,
           left: '2%',
           right: '2%',
           bottom: '3%',
@@ -62,7 +63,7 @@ export default {
         },
         xAxis: [{
           type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: ['周一', '周二', '周三', '周四', '周五', '周六', '周天'],
           axisTick: {
             alignWithLabel: true
           }

@@ -49,7 +49,7 @@
       </el-table-column>
       <el-table-column label="项目名称" width="150px">
         <template slot-scope="{row}">
-          <span>{{ row.name }}</span>
+          <span class="link-type" @click="showProjectDetail(row.id)">{{ row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="项目负责人" width="110px" align="center">
@@ -368,6 +368,10 @@ export default {
     getSortClass: function(key) {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'
+    },
+    showProjectDetail(id) {
+      // 跳转到项目详情页
+      this.$router.push('/project/detail')
     }
   }
 }

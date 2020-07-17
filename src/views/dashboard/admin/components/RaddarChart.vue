@@ -53,6 +53,9 @@ export default {
             type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
           }
         },
+        title: {
+          text: '预算占比'
+        },
         radar: {
           radius: '66%',
           center: ['50%', '42%'],
@@ -68,18 +71,18 @@ export default {
             }
           },
           indicator: [
-            { name: 'Sales', max: 10000 },
-            { name: 'Administration', max: 20000 },
-            { name: 'Information Technology', max: 20000 },
-            { name: 'Customer Support', max: 20000 },
-            { name: 'Development', max: 20000 },
-            { name: 'Marketing', max: 20000 }
+            { name: '项目1', max: 10000 },
+            { name: '项目2', max: 20000 },
+            { name: '项目3', max: 20000 },
+            { name: '项目4', max: 20000 },
+            { name: '项目5', max: 20000 },
+            { name: '项目6', max: 20000 }
           ]
         },
         legend: {
           left: 'center',
-          bottom: '10',
-          data: ['Allocated Budget', 'Expected Spending', 'Actual Spending']
+          bottom: '5',
+          data: ['预算额度', '预计费用', '实际费用']
         },
         series: [{
           type: 'radar',
@@ -96,15 +99,15 @@ export default {
           data: [
             {
               value: [5000, 7000, 12000, 11000, 15000, 14000],
-              name: 'Allocated Budget'
+              name: '预算额度'
             },
             {
               value: [4000, 9000, 15000, 15000, 13000, 11000],
-              name: 'Expected Spending'
+              name: '预计费用'
             },
             {
               value: [5500, 11000, 12000, 15000, 12000, 12000],
-              name: 'Actual Spending'
+              name: '实际费用'
             }
           ],
           animationDuration: animationDuration

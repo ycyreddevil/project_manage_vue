@@ -49,10 +49,13 @@ export default {
           trigger: 'item',
           formatter: '{a} <br/>{b} : {c} ({d}%)'
         },
+        title: {
+          text: '项目占比'
+        },
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']
+          data: ['项目1', '项目2', '项目3', '项目4', '项目5']
         },
         series: [
           {
@@ -62,11 +65,11 @@ export default {
             radius: [15, 95],
             center: ['50%', '38%'],
             data: [
-              { value: 320, name: 'Industries' },
-              { value: 240, name: 'Technology' },
-              { value: 149, name: 'Forex' },
-              { value: 100, name: 'Gold' },
-              { value: 59, name: 'Forecasts' }
+              { value: 320, name: '项目1' },
+              { value: 240, name: '项目2' },
+              { value: 149, name: '项目3' },
+              { value: 100, name: '项目4' },
+              { value: 59, name: '项目5' }
             ],
             animationEasing: 'cubicInOut',
             animationDuration: 2600

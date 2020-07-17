@@ -5,22 +5,26 @@
     </div>
     <div style="position:relative;">
       <pan-thumb :image="avatar" class="panThumb" />
-      <mallki class-name="mallki-text" text="vue-element-admin" />
+      <mallki class-name="mallki-text" text="余昌运" />
       <div style="padding-top:35px;" class="progress-item">
-        <span>Vue</span>
+        <span>全自动核酸提取工作站</span>
         <el-progress :percentage="70" />
       </div>
       <div class="progress-item">
-        <span>JavaScript</span>
+        <span>液基薄层细胞制片机OEM</span>
         <el-progress :percentage="18" />
       </div>
       <div class="progress-item">
-        <span>Css</span>
+        <span>液基寄生虫前处理系统</span>
         <el-progress :percentage="12" />
       </div>
       <div class="progress-item">
-        <span>ESLint</span>
+        <span>寄生虫卵试剂盒一代技改项目</span>
         <el-progress :percentage="100" status="success" />
+      </div>
+      <div class="progress-item">
+        <span>全自动核酸提取工作站</span>
+        <el-progress :percentage="12" />
       </div>
     </div>
   </el-card>
