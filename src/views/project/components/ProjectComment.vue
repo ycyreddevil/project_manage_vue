@@ -19,8 +19,9 @@
   </div>
 
 </template>
-
 <script>
+import CommentService from '@/api/comment'
+import ReplyService from '@/api/reply'
 export default {
   name: 'ProjectComment',
   data() {
@@ -36,16 +37,16 @@ export default {
   },
   methods: {
     listComments() {
-      // const self = this
-      // CommentService.list({
-      //   target: 2
-      // }).then(data => {
-      //   data = data.result
-      //   self.comments = data ? [].concat(data) : []
-      //   if (self.comments.length > 0) {
-      //     self.listReply()
-      //   }
-      // })
+      const self = this
+      CommentService.list({
+        target: 2
+      }).then(data => {
+        data = data.result
+        self.comments = data ? [].concat(data) : []
+        if (self.comments.length > 0) {
+          self.listReply()
+        }
+      })
     },
     listReply() {
       const self = this
@@ -54,13 +55,13 @@ export default {
         return
       }
       for (let i = 0; i < self.comments.length; i++) {
-        // const value = self.comments[i]
-        // ReplyService.list({
-        //   cid: value.id
-        // }).then(data => {
-        //   data = data.result
-        //   self.$set(self.replys, value.id, data ? [].concat(data) : [])
-        // })
+        const value = self.comments[i]
+        ReplyService.list({
+          cid: value.id
+        }).then(data => {
+          data = data.result
+          self.$set(self.replys, value.id, data ? [].concat(data) : [])
+        })
       }
     },
     handleClickAvatar(item) {
