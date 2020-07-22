@@ -12,7 +12,7 @@
 <script>
 import DetailHeader from '@/views/project/components/DetailHeader'
 export default {
-  name: 'ProjectHistory',
+  name: 'ProjectHistorySimple',
   components: { DetailHeader }
 }
 </script>

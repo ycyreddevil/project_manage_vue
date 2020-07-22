@@ -3,9 +3,10 @@
     <div>
       <el-tabs v-model="activeName">
         <el-tab-pane label="项目概述" name="desc"><project-desc /></el-tab-pane>
-        <el-tab-pane label="团队管理" name="team" />
-        <el-tab-pane label="项目任务" name="task" />
-        <el-tab-pane label="项目动态" name="dynamic" />‘
+        <el-tab-pane label="团队管理" name="team"><project-member /></el-tab-pane>
+        <el-tab-pane label="项目任务" name="task"><project-task /></el-tab-pane>
+        <el-tab-pane label="项目动态" name="dynamic"><project-dynamic /></el-tab-pane>
+        <el-tab-pane label="项目评论" name="comment"><project-comment /></el-tab-pane>
         <el-tab-pane label="预算管理" name="budget" />
       </el-tabs>
     </div>
@@ -13,9 +14,13 @@
 </template>
 <script>
 import ProjectDesc from '@/views/project/components/ProjectDesc'
+import ProjectMember from '@/views/project/components/ProjectMember'
+import ProjectTask from '@/views/project/components/ProjectTask'
+import ProjectDynamic from '@/views/project/components/ProjectDynamic'
+import ProjectComment from '@/views/project/components/ProjectComment'
 export default {
   name: 'ProjectDetail',
-  components: { ProjectDesc },
+  components: { ProjectComment, ProjectDynamic, ProjectTask, ProjectMember, ProjectDesc },
   data() {
     return {
       activeName: 'desc'

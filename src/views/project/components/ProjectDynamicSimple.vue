@@ -15,7 +15,7 @@
 <script>
 import DetailHeader from '@/views/project/components/DetailHeader'
 export default {
-  name: 'ProjectDynamic',
+  name: 'ProjectDynamicSimple',
   components: {
     DetailHeader
   },

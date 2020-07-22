@@ -36,7 +36,7 @@
 <script>
 import DetailHeader from '@/views/project/components/DetailHeader'
 export default {
-  name: 'ProjectMember',
+  name: 'ProjectMemberSimple',
   components: { DetailHeader },
   data() {
     return {
