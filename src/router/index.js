@@ -88,6 +88,13 @@ export const constantRoutes = [
     component: Layout,
     alwaysShow: false,
     children: [
+      // {
+      //   path: 'index',
+      //   component: () => import('@/views/project/index'),
+      //   name: 'ProjectIndex',
+      //   hidden: true,
+      //   meta: { title: '项目首页', icon: 'tree', affix: true }
+      // },
       {
         path: 'detail',
         component: () => import('@/views/project/detail'),

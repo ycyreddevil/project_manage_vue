@@ -23,7 +23,6 @@ router.beforeEach(async(to, from, next) => {
           return
         }
         if (store.getters.modules.length > 0) {
-          console.log(store.getters.modules)
           next()
           return
         }

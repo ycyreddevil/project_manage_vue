@@ -50,16 +50,24 @@ const mutations = {
 const groupRoutes = (data) => {
   const parentPath = data.item.url
   const newPath = {
-    path: parentPath || '/',
-    component: data.children && data.children.length > 0 ? Layout : resolve => require(['@/views' + data.item.url.toLowerCase() + '.vue'], resolve),
+    path: !data.item.parentId ? '/' : parentPath,
+    component: !data.item.parentId ? Layout : resolve => require(['@/views' + data.item.url.toLowerCase() + '.vue'], resolve),
     meta: {
       title: data.item.name,
       sortNo: data.item.sortNo,
       icon: data.item.iconName
     },
     name: data.item.name,
-    hidden: false,
-    children: []
+    children: data.item.parentId ? [] : [{
+      path: parentPath,
+      component: resolve => require(['@/views' + data.item.url.toLowerCase() + '.vue'], resolve),
+      meta: {
+        title: data.item.name,
+        sortNo: data.item.sortNo,
+        icon: data.item.iconName
+      },
+      name: data.item.name
+    }]
   }
   if (data.children && data.children.length > 0) {
     data.children.forEach(child => {
