@@ -100,7 +100,28 @@ export const constantRoutes = [
         component: () => import('@/views/project/detail'),
         name: 'ProjectDetail',
         hidden: true,
-        meta: { title: '项目详情页', icon: 'documentation', affix: true }
+        meta: { title: '项目详情页', icon: 'documentation', affix: false }
+      }
+    ]
+  },
+  {
+    path: '/task',
+    component: Layout,
+    alwaysShow: false,
+    children: [
+      // {
+      //   path: 'index',
+      //   component: () => import('@/views/project/index'),
+      //   name: 'ProjectIndex',
+      //   hidden: true,
+      //   meta: { title: '项目首页', icon: 'tree', affix: true }
+      // },
+      {
+        path: 'detail',
+        component: () => import('@/views/task/detail'),
+        name: 'TaskDetail',
+        hidden: true,
+        meta: { title: '任务详情页', icon: 'documentation', affix: false }
       }
     ]
   }

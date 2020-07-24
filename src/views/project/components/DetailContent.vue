@@ -30,7 +30,7 @@
 <script>
 import DetailHeader from '@/views/project/components/DetailHeader'
 export default {
-  name: 'DetailContent',
+  name: 'ProjectDetailContent',
   components: {
     DetailHeader
   },

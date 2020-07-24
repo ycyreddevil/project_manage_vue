@@ -1,130 +1,366 @@
 <template>
-  <div class="app-container">
-    <div class="filter-container">
-      <el-link type="info" style="padding: 0px 10px">所有</el-link>
-      <el-link type="info" style="padding: 0px 10px">未关闭</el-link>
-      <el-link type="info" style="padding: 0px 10px">指派给我</el-link>
-      <el-link type="info" style="padding: 0px 10px">已延期</el-link>
-      <el-input v-model="key" placeholder="任务名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        查询
-      </el-button>
-    </div>
-    <el-table
-      :key="tableKey"
-      v-loading="listLoading"
-      :data="list"
-      fit
-      size="small"
-      stripe
-      highlight-current-row
-      style="width: 100%;"
-    >
-      <el-table-column label="id" prop="id" align="center" width="50">
-        <template slot-scope="{row}">
-          <span class="link-type" @click="showPersonDetail(row.id)">{{ row.id }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="P" align="center" width="50">
-        <template slot-scope="{row}">
-          <svg-icon width="1.5em" height="1.5em" :icon-class="row.priority" />
-        </template>
-      </el-table-column>
-      <el-table-column label="任务名称" width="500" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.name }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="状态" width="80">
-        <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="指派给" align="center" width="80">
-        <template slot-scope="{row}">
-          <span>{{ row.userName }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="完成者" align="center" width="80">
-        <template slot-scope="{row}">
-          <span>{{ row.userName }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="权重比" align="center" width="80">
-        <template slot-scope="{row}">
-          <span>{{ row.weight }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="预计用时" width="80">
-        <template slot-scope="{row}">
-          <span>{{ row.time }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="已消耗" align="center" width="80">
-        <template slot-scope="{row}">
-          <span>{{ row.usedTime }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="%" align="center" width="80">
-        <template slot-scope="{row}">
-          <span>{{ row.percent }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="{row}">
-          <el-button size="mini" @click="handleModifyStatus(row,'draft')">
-            删除
-          </el-button>
-          <el-button size="mini" @click="handleModifyStatus(row,'draft')">
-            删除
-          </el-button>
-          <el-button size="mini" @click="handleModifyStatus(row,'draft')">
-            删除
-          </el-button>
-          <el-button size="mini" @click="handleModifyStatus(row,'draft')">
-            删除
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+  <div>
+    <el-row :gutter="20">
+      <el-col :span="16">
+        <v-org-tree
+          v-if="data"
+          style="height: 58.5rem;;width: -webkit-fill-available;overflow: auto"
+          horizontal
+          :data="data"
+          collapsable
+          expand-all
+          @on-expand="onExpand"
+        />
+      </el-col>
+      <el-col :span="8">
+        <el-form ref="form" class="chart-wrapper" :model="form" label-width="80px">
+          <DetailHeader header-name="任务概述" :is-show-hidden="false" />
+          <el-form-item label="任务名称" size="mini">
+            {{ form.name }}
+          </el-form-item>
+          <el-form-item label="任务描述" size="mini">
+            {{ form.region }}
+          </el-form-item>
+          <el-form-item label="任务类型" size="mini">
+            {{ form.date1 }}
+          </el-form-item>
+          <el-form-item label="负责人" size="mini">
+            {{ form.date2 }}
+          </el-form-item>
+          <el-form-item label="验收标准" size="mini">
+            {{ form.delivery }}
+          </el-form-item>
+          <el-form-item label="任务权重">
+            {{ form.type }}
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="onSubmit">查看详情</el-button>
+            <el-button>查看下一项</el-button>
+          </el-form-item>
+        </el-form>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'ProjectTask',
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        已完成: 'success',
-        开发中: 'primary',
-        已延期: 'danger'
-      }
-      return statusMap[status]
-    }
-  },
+  name: 'OrgTreePage',
   data() {
     return {
-      listLoading: false,
-      tableKey: 0,
-      key: '',
-      list: [
-        { id: 1, priority: '2', name: '开发开发开发开开发开发开发开发开发开发开发开发开发开发开发发开发开发开发开发开发开发开发', status: '开发中', userName: '余尧毅', weight: '20', time: '30天', usedTime: '10天', percent: '10%' },
-        { id: 1, priority: '1', name: '测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试', status: '已完成', userName: '余昌运', weight: '30', time: '40天', usedTime: '20天', percent: '2%' },
-        { id: 1, priority: '4', name: '调研调研调研调研调研调研调研调研调研调研调研调研调研调研调研调研调研调研调研调研调研调研', status: '已延期', userName: '杨海明', weight: '10', time: '50天', usedTime: '30天', percent: '30%' }
-      ]
+      form: {
+        name: '绩效考核与产值',
+        region: '任务可分门别类（研发、专利、项目申报、调研等），按照不同类别，可进行产值或绩效的统计',
+        date1: '研发',
+        date2: '余尧毅',
+        delivery: '任务可分门别类（研发、专利、项目申报、调研等），按照不同类别，可进行产值或绩效的统计任务可分门别类（研发、专利、项目申报、调研等），按照不同类别，可进行产值或绩效的统计',
+        type: '20%'
+      },
+      data: {
+        id: 0,
+        label: '度量指标体系',
+        children: [
+          {
+            id: 1,
+            label: '交付质量',
+            children: [
+              {
+                id: 11,
+                label: '生产质量',
+                children: [
+                  {
+                    id: 111,
+                    label: '生产事件'
+                  }
+                ]
+              },
+              {
+                id: 12,
+                label: '开发质量',
+                children: [
+                  {
+                    id: 121,
+                    label: '项目开发缺陷密度'
+                  }
+                ]
+              },
+              {
+                id: 13,
+                label: '发布质量',
+                children: [
+                  {
+                    id: 131,
+                    label: '上线失败率',
+                    children: [
+                      {
+                        id: 131,
+                        label: '上线失败率',
+                        children: [
+                          {
+                            id: 131,
+                            label: '上线失败率',
+                            children: [
+                              {
+                                id: 131,
+                                label: '上线失败率',
+                                children: [
+                                  {
+                                    id: 131,
+                                    label: '上线失败率',
+                                    children: [
+                                      {
+                                        id: 131,
+                                        label: '上线失败率',
+                                        children: [
+                                          {
+                                            id: 131,
+                                            label: '上线失败率',
+                                            children: [
+                                              {
+                                                id: 131,
+                                                label: '上线失败率',
+                                                children: [
+                                                  {
+                                                    id: 131,
+                                                    label: '上线失败率',
+                                                    children: [
+                                                      {
+                                                        id: 131,
+                                                        label: '上线失败率',
+                                                        children: [
+                                                          {
+                                                            id: 131,
+                                                            label: '上线失败率'
+                                                          }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                id: 14,
+                label: '过程质量',
+                children: [
+                  {
+                    id: 141,
+                    label: '项目过程符合度'
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            id: 2,
+            label: '交付效能',
+            children: [
+              {
+                id: 21,
+                label: '交付能力',
+                children: [
+                  {
+                    id: 211,
+                    label: '功能点产出'
+                  },
+                  {
+                    id: 212,
+                    label: '代码行产出'
+                  },
+                  {
+                    id: 213,
+                    label: '上线投产次数'
+                  },
+                  {
+                    id: 214,
+                    label: '接收需求数'
+                  },
+                  {
+                    id: 215,
+                    label: '立项数'
+                  },
+                  {
+                    id: 216,
+                    label: '结项数'
+                  },
+                  {
+                    id: 217,
+                    label: '迭代速率'
+                  },
+                  {
+                    id: 218,
+                    label: '迭代完成率'
+                  }
+                ]
+              },
+              {
+                id: 22,
+                label: '交付效率',
+                children: [
+                  {
+                    id: 221,
+                    label: '人均产出功能点'
+                  },
+                  {
+                    id: 222,
+                    label: '项目生产率'
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            id: 3,
+            label: '业务满意度',
+            children: [
+              {
+                id: 31,
+                label: '业务满意度'
+              }
+            ]
+          },
+          {
+            id: 4,
+            label: '交付价值',
+            children: [
+              {
+                id: 41,
+                label: '业务价值关键指标'
+              }
+            ]
+          },
+          {
+            id: 5,
+            label: '交付速度',
+            children: [
+              {
+                id: 51,
+                label: '需求评估速度',
+                children: [
+                  {
+                    id: 511,
+                    label: '需求响应度'
+                  }
+                ]
+              },
+              {
+                id: 52,
+                label: '开发速度',
+                children: [
+                  {
+                    id: 521,
+                    label: '完成度天数'
+                  },
+                  {
+                    id: 522,
+                    label: '完成度达标率'
+                  },
+                  {
+                    id: 523,
+                    label: '故事平均测试通过周期'
+                  }
+                ]
+              },
+              {
+                id: 53,
+                label: '发布速度',
+                children: [
+                  {
+                    id: 531,
+                    label: '首次交付天数'
+                  },
+                  {
+                    id: 532,
+                    label: '首次交付达标率'
+                  },
+                  {
+                    id: 533,
+                    label: '故事平均发布周期'
+                  }
+                ]
+              },
+              {
+                id: 54,
+                label: '燃尽图'
+              },
+              {
+                id: 55,
+                label: '一次测试通过率'
+              }
+            ]
+          },
+          {
+            id: 6,
+            label: '持续交付',
+            children: [
+              {
+                id: 61,
+                label: '技术债务率',
+                url: 'https://world.taobao.com/'
+              },
+              {
+                id: 62,
+                label: 'DEVOPS成熟度',
+                url: ' http://www.baidu.com'
+              },
+              {
+                id: 63,
+                label: 'DEVOPS健康度',
+                url: ' https://www.google.com/'
+              }
+            ]
+          }
+        ]
+      },
+      zoom: 100
     }
   },
+  mounted() {
+  },
   methods: {
-    handleModifyStatus() {},
-    showPersonDetail() {},
-    addMember() {}
+    collapse(list) {
+      var _this = this
+      list.forEach(function(child) {
+        if (child.expand) {
+          child.expand = false
+        }
+        child.children && _this.collapse(child.children)
+      })
+    },
+    onExpand(e, data) {
+      if ('expand' in data) {
+        data.expand = !data.expand
+        if (!data.expand && data.children) {
+          this.collapse(data.children)
+        }
+      } else {
+        this.$set(data, 'expand', true)
+      }
+    }
   }
 }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+  .chart-wrapper {
+    height: 58.5rem;
+    background: #fff;
+    padding: 16px 16px 0;
+    margin-bottom: 32px;
+  }
 </style>

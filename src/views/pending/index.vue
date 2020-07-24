@@ -2,9 +2,9 @@
   <div class="app-container">
     <div class="filter-container">
       <el-link type="info" style="padding: 0px 10px">所有</el-link>
-      <el-link type="info" style="padding: 0px 10px">未关闭</el-link>
-      <el-link type="info" style="padding: 0px 10px">已完成</el-link>
-      <el-link type="info" style="padding: 0px 10px">已延期</el-link>
+      <el-link type="info" style="padding: 0px 10px">待处理</el-link>
+      <el-link type="info" style="padding: 0px 10px">已处理</el-link>
+      <el-link type="info" style="padding: 0px 10px">已提交</el-link>
       <el-input v-model="key" placeholder="任务名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
@@ -94,7 +94,7 @@
 
 <script>
 export default {
-  name: 'ProjectTask',
+  name: 'PendingIndex',
   filters: {
     statusFilter(status) {
       const statusMap = {
