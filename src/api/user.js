@@ -38,3 +38,11 @@ export function checkToken(data) {
     data
   })
 }
+
+export function findUsers(params) {
+  return request({
+    url: '/user/findUsers',
+    method: 'post',
+    params
+  })
+}

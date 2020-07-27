@@ -101,6 +101,13 @@ export const constantRoutes = [
         name: 'ProjectDetail',
         hidden: true,
         meta: { title: '项目详情页', icon: 'documentation', affix: false }
+      },
+      {
+        path: 'addorupdate',
+        component: () => import('@/views/project/addorupdate'),
+        name: 'ProjectAddOrUpdate',
+        hidden: true,
+        meta: { title: '新增编辑项目页', icon: 'documentation', affix: false }
       }
     ]
   },
