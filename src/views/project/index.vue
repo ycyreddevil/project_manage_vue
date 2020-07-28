@@ -241,7 +241,7 @@ export default {
       }
     },
     handleCreate() {
-      this.$router.push('/project/addorupdate')
+      this.$router.push('/project/addorupdate/-1')
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
@@ -262,12 +262,17 @@ export default {
       })
     },
     handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
+      this.$confirm('是否编辑该项目', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$router.push(`/project/addorupdate/${row.id}`)
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
       })
     },
     updateData() {
@@ -332,7 +337,7 @@ export default {
     },
     showProjectDetail(id) {
       // 跳转到项目详情页
-      this.$router.push('/project/detail')
+      this.$router.push('/project/detail/1')
     }
   }
 }

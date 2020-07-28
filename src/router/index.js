@@ -96,18 +96,18 @@ export const constantRoutes = [
       //   meta: { title: '项目首页', icon: 'tree', affix: true }
       // },
       {
-        path: 'detail',
+        path: 'detail/:id',
         component: () => import('@/views/project/detail'),
         name: 'ProjectDetail',
         hidden: true,
-        meta: { title: '项目详情页', icon: 'documentation', affix: false }
+        meta: { title: '项目详情页', icon: 'documentation', affix: false, breadcrumb: false }
       },
       {
-        path: 'addorupdate',
+        path: 'addorupdate/:id',
         component: () => import('@/views/project/addorupdate'),
         name: 'ProjectAddOrUpdate',
         hidden: true,
-        meta: { title: '新增编辑项目页', icon: 'documentation', affix: false }
+        meta: { title: '新增编辑项目页', icon: 'documentation', affix: false, breadcrumb: false }
       }
     ]
   },
@@ -124,11 +124,11 @@ export const constantRoutes = [
       //   meta: { title: '项目首页', icon: 'tree', affix: true }
       // },
       {
-        path: 'detail',
+        path: 'detail/:id',
         component: () => import('@/views/task/detail'),
         name: 'TaskDetail',
         hidden: true,
-        meta: { title: '任务详情页', icon: 'documentation', affix: false }
+        meta: { title: '任务详情页', icon: 'documentation', affix: false, breadcrumb: false }
       }
     ]
   }
