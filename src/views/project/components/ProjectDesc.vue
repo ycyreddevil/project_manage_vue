@@ -17,7 +17,7 @@
         <el-row type="flex" justify="space-around">
           <el-col :span="11" style="overflow-y: auto">
             <div class="chart-wrapper">
-              <project-member-simple />
+              <project-member-simple :project-id="projectId" />
             </div>
           </el-col>
           <el-col :span="11" style="overflow-y: auto">
@@ -42,7 +42,13 @@ import DetailContent from '@/views/project/components/DetailContent'
 
 export default {
   name: 'ProjectDesc',
-  components: { ProjectHistorySimple, ProjectMemberSimple, ProjectDynamicSimple, BarChart, DetailContent }
+  components: { ProjectHistorySimple, ProjectMemberSimple, ProjectDynamicSimple, BarChart, DetailContent },
+  props: {
+    projectId: {
+      type: String,
+      required: true
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>

@@ -2,7 +2,7 @@
   <div class="dashboard-editor-container">
     <div>
       <el-tabs v-model="activeName">
-        <el-tab-pane label="项目概述" name="desc"><project-desc /></el-tab-pane>
+        <el-tab-pane label="项目概述" name="desc"><project-desc :project-id="projectId" /></el-tab-pane>
         <el-tab-pane label="团队管理" name="team"><project-member /></el-tab-pane>
         <el-tab-pane label="项目任务" name="task"><project-task /></el-tab-pane>
         <el-tab-pane label="项目动态" name="dynamic"><project-dynamic /></el-tab-pane>
@@ -23,12 +23,16 @@ export default {
   components: { ProjectComment, ProjectDynamic, ProjectTask, ProjectMember, ProjectDesc },
   data() {
     return {
-      activeName: 'desc'
+      activeName: 'desc',
+      projectId: ''
     }
   },
   watch: {
     activeName(val) {
     }
+  },
+  created() {
+    this.projectId = this.$route.params.id
   },
   methods: {
     showCreatedTimes() {

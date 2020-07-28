@@ -15,3 +15,19 @@ export function findProjectMember(params) {
     params
   })
 }
+
+export function addOrUpdateProject(data) {
+  return request({
+    url: '/project/addOrUpdateProject',
+    method: 'post',
+    data
+  })
+}
+
+export function getProjectById(params) {
+  return request({
+    url: '/project/getProjectById',
+    method: 'post',
+    params
+  })
+}

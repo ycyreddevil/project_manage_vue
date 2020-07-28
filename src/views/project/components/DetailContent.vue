@@ -21,7 +21,7 @@
         <el-input v-model="form.desc" type="textarea" disabled />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">编辑</el-button>
+        <el-button type="primary" @click="editProject">编辑</el-button>
         <el-button>取消</el-button>
       </el-form-item>
     </el-form>
@@ -54,6 +54,9 @@ export default {
     },
     showMoreDynamic() {
       console.log('222')
+    },
+    editProject() {
+      this.$router.push('/project/addorupdate/4')
     }
   }
 }
