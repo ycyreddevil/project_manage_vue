@@ -1,14 +1,10 @@
 <template>
   <div>
     <detail-header header-name="项目团队" :show-more-function="showTeamManage" />
-    <el-row v-for="count in memberList.length" :key="count" class="elRow" type="flex" style="margin-bottom:1.5rem" justify="space-around">
-      <el-col :span="10">
+    <el-row v-for="count in Math.ceil(memberList.length/2)" :key="count" class="elRow" type="flex" style="margin-bottom:1.5rem" justify="space-around">
+      <el-col v-for="(member,index) in memberList.slice(count-1+index, count+1+index)" :key="index" :span="10">
         <el-avatar size="medium" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
-        <span>{{ memberList[count-1].userName }}({{ memberList[count-1].projectRole }})</span>
-      </el-col>
-      <el-col :span="10">
-        <el-avatar size="medium" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
-        <span>{{ memberList[count-1].userName }}({{ memberList[count-1].projectRole }})</span>
+        <span>{{ member.userName }}({{ member.projectRole }})</span>
       </el-col>
     </el-row>
   </div>
