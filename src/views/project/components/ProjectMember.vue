@@ -37,7 +37,7 @@
       </el-table-column>
       <el-table-column label="加盟日" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.modifyTime }}</span>
+          <span>{{ row.modifyTime.replace('T', ' ') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="用户状态" align="center">
