@@ -31,3 +31,11 @@ export function getProjectById(params) {
     params
   })
 }
+
+export function addOrUpdateProjectMember(data) {
+  return request({
+    url: '/project/addOrUpdateProjectMember',
+    method: 'post',
+    data
+  })
+}

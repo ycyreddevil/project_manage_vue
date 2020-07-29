@@ -44,35 +44,161 @@
         <template slot-scope="{row}">
           <span>{{ row.status }}</span>
         </template>
+        <template slot-scope="{row}">
+          <el-tag :type="row.status | statusFilter">
+            {{ row.status === 1 ? '正常' : '禁用' }}
+          </el-tag>
+        </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button size="mini" @click="handleModifyStatus(row,'draft')">
+          <el-button type="danger" size="mini" @click="handleModifyStatus(row,'draft')">
             删除
+          </el-button>
+          <el-button type="warning" size="mini" @click="handleModifyStatus(row,'draft')">
+            禁用
           </el-button>
         </template>
       </el-table-column>
     </el-table>
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="30%">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 300px; margin-left:20px;">
+        <el-form-item label="姓名" prop="userName">
+          <el-select
+            ref="selectCharge"
+            v-model="temp.userId"
+            :loading="isSearchLoading"
+            default-first-option
+            :remote-method="getRemoteUserList"
+            filterable
+            remote
+            placeholder="请选择项目成员"
+            @change="changeCharge"
+          >
+            <el-option v-for="(item,index) in userList" :key="item+index" :label="item.userName" :value="item.userId" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="角色" prop="projectRole">
+          <el-input v-model="temp.projectRole" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+          确定
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
+import { findProjectMember, addOrUpdateProjectMember } from '@/api/project'
+import { findUsers } from '@/api/user'
 export default {
   name: 'ProjectMember',
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        1: 'success',
+        0: 'danger'
+      }
+      return statusMap[status]
+    }
+  },
   data() {
     return {
+      projectId: '',
       listLoading: false,
       tableKey: 0,
-      list: [
-        { userName: '余尧毅', userId: '10000000', mobile: '18970902698', status: '正常', modifyTime: '2015-11-11', projectRole: '项目经理' },
-        { userName: '余昌运', userId: '10000001', mobile: '13576935550', status: '正常', modifyTime: '2017-9-18', projectRole: '产品经理' },
-        { userName: '张三', userId: '10000002', mobile: '13544468884', status: '正常', modifyTime: '2016-9-18', projectRole: '工程师' }
-      ]
+      list: [],
+      dialogFormVisible: false,
+      dialogStatus: 'create',
+      textMap: {
+        update: '更新成员',
+        create: '创建成员'
+      },
+      rules: {
+        userName: [{ required: true, message: '用户必选', trigger: 'change' }],
+        projectRole: [{ required: true, message: '项目角色必填', trigger: 'change' }]
+      },
+      isSearchLoading: false,
+      temp: {
+        userId: '',
+        userName: '',
+        projectId: Number.parseInt(this.$route.params.id),
+        projectRole: '',
+        status: 1
+      },
+      userList: []
     }
+  },
+  mounted() {
+    this.projectId = this.$route.params.id
+    findProjectMember({ projectId: Number.parseInt(this.projectId) }).then(res => {
+      if (res.code === 200) {
+        this.list = JSON.parse(res.result)
+      } else {
+        this.$message({
+          message: res.message,
+          type: 'error'
+        })
+      }
+    }).catch(res => {
+      this.$message({
+        message: res,
+        type: 'error'
+      })
+    })
   },
   methods: {
     handleModifyStatus() {},
     showPersonDetail() {},
-    addMember() {}
+    addMember() {
+      this.dialogFormVisible = true
+    },
+    getRemoteUserList(key) {
+      if (key !== '') {
+        this.isSearchLoading = true
+        findUsers({ key: key }).then(res => {
+          this.isSearchLoading = false
+          this.userList = res.result
+        })
+      }
+    },
+    changeCharge(userId) {
+      const user = this.userList.find(item => {
+        return item.userId === userId
+      })
+      this.temp.userName = user.userName
+    },
+    createData() {
+      addOrUpdateProjectMember(this.temp).then(res => {
+        if (res.code === 200) {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+          this.list.push(res.result)
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'error'
+          })
+        }
+        this.dialogFormVisible = false
+      }).catch(res => {
+        this.$message({
+          message: res,
+          type: 'error'
+        })
+        this.dialogFormVisible = false
+      })
+    },
+    updateData() {
+      console.log(111)
+    }
   }
 }
 </script>

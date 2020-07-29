@@ -203,7 +203,7 @@ export default {
           }
         }).catch(res => {
           this.$message({
-            message: res.message,
+            message: res,
             type: 'error'
           })
         })

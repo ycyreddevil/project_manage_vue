@@ -304,8 +304,8 @@ export default {
       this.list.splice(index, 1)
     },
     getProjectTeam(projectId) {
-      project.findProjectMember({ projectId: projectId }).then(response => {
-        this.projectTeam = response.result
+      project.findProjectMember({ projectId: projectId }).then(res => {
+        this.projectTeam = JSON.parse(res.result)
         this.dialogTeamVisible = true
       })
     },
