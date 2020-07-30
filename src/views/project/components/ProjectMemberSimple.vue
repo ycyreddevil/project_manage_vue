@@ -1,7 +1,7 @@
 <template>
   <div>
     <detail-header header-name="项目团队" :show-more-function="showTeamManage" />
-    <el-row v-if="memberList.length > 1" class="elRow" type="flex" style="margin-bottom:1.5rem" justify="space-around">
+    <el-row v-if="memberList.length >= 1" class="elRow" type="flex" style="margin-bottom:1.5rem" justify="space-around">
       <el-col :span="10">
         <el-avatar v-if="memberList[0]" size="medium" :src="memberList[0].avatar" />
         <span v-if="memberList[0]">{{ memberList[0].userName }}({{ memberList[0].projectRole }})</span>
@@ -70,7 +70,7 @@ export default {
   },
   methods: {
     showTeamManage() {
-      console.log(111)
+      this.$emit('changeTab', 'team')
     }
   }
 }

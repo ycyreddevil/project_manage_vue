@@ -39,3 +39,19 @@ export function addOrUpdateProjectMember(data) {
     data
   })
 }
+
+export function getProjectMemberById(params) {
+  return request({
+    url: '/project/getProjectMemberById',
+    method: 'post',
+    params
+  })
+}
+
+export function getProjectTaskTree(params) {
+  return request({
+    url: '/project/getProjectTaskTree',
+    method: 'post',
+    params
+  })
+}

@@ -17,7 +17,7 @@
     >
       <el-table-column label="成员名" prop="id" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="showPersonDetail(row.userId)">{{ row.userName }}</span>
+          <span class="link-type" @click="showMemberDetail(row.id)">{{ row.userName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="成员id" align="center">
@@ -37,7 +37,7 @@
       </el-table-column>
       <el-table-column label="加盟日" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.modifyTime }}</span>
+          <span>{{ row.modifyTime.replace('T', ' ') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="用户状态" align="center">
@@ -67,6 +67,7 @@
           <el-select
             ref="selectCharge"
             v-model="temp.userId"
+            disabled="dialogStatus === 'update'"
             :loading="isSearchLoading"
             default-first-option
             :remote-method="getRemoteUserList"
@@ -94,7 +95,8 @@
   </div>
 </template>
 <script>
-import { findProjectMember, addOrUpdateProjectMember } from '@/api/project'
+import waves from '@/directive/waves' // waves directive
+import { findProjectMember, addOrUpdateProjectMember, getProjectMemberById } from '@/api/project'
 import { findUsers } from '@/api/user'
 export default {
   name: 'ProjectMember',
@@ -107,6 +109,7 @@ export default {
       return statusMap[status]
     }
   },
+  directives: { waves },
   data() {
     return {
       projectId: '',
@@ -154,8 +157,33 @@ export default {
   },
   methods: {
     handleModifyStatus() {},
-    showPersonDetail() {},
+    showMemberDetail(id) {
+      this.dialogFormVisible = true
+      this.dialogStatus = 'update'
+      getProjectMemberById({ id: id }).then(res => {
+        if (res.code === 200) {
+          this.temp = res.result
+          this.$refs.selectCharge.cachedOptions.push({
+            currentLabel: res.result.userName,
+            currentValue: res.result.userId,
+            label: res.result.userName,
+            value: res.result.userId
+          })
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'error'
+          })
+        }
+      }).catch(res => {
+        this.$message({
+          message: res,
+          type: 'error'
+        })
+      })
+    },
     addMember() {
+      this.dialogStatus = 'create'
       this.dialogFormVisible = true
     },
     getRemoteUserList(key) {
@@ -197,7 +225,30 @@ export default {
       })
     },
     updateData() {
-      console.log(111)
+      addOrUpdateProjectMember(this.temp).then(res => {
+        if (res.code === 200) {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+          const index = this.list.findIndex((v, i) => {
+            return v.id === this.temp.id
+          })
+          this.list[index].projectRole = this.temp.projectRole
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'error'
+          })
+        }
+        this.dialogFormVisible = false
+      }).catch(res => {
+        this.$message({
+          message: res,
+          type: 'error'
+        })
+        this.dialogFormVisible = false
+      })
     }
   }
 }

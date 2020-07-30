@@ -17,7 +17,7 @@
         <el-row type="flex" justify="space-around">
           <el-col :span="11" style="overflow-y: auto">
             <div class="chart-wrapper">
-              <project-member-simple :project-id="projectId" />
+              <project-member-simple :project-id="projectId" v-on="$listeners" />
             </div>
           </el-col>
           <el-col :span="11" style="overflow-y: auto">
@@ -28,7 +28,7 @@
         </el-row>
       </el-col>
       <el-col :span="8">
-        <detail-content />
+        <detail-content :project-id="projectId" />
       </el-col>
     </el-row>
   </div>

@@ -7,6 +7,7 @@ import 'normalize.css/normalize.css' // a modern alternative to CSS resets
 import OrgTree from 'v-org-tree'
 import 'v-org-tree/dist/v-org-tree.css'
 import Element from 'element-ui'
+import 'element-ui/lib/theme-chalk/base.css'
 import './styles/element-variables.scss'
 // import enLang from 'element-ui/lib/locale/lang/en'// 如果使用中文语言包请默认支持，无需额外引入，请删除该依赖
 

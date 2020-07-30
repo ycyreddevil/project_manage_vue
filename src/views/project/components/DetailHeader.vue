@@ -5,7 +5,7 @@
     </el-col>
     <el-col :span="8" />
     <el-col :span="3">
-      <a v-show="isShowHidden" style="margin-left:0.5rem;font-weight: bold;" @click="showMoreFunction">more</a>
+      <a v-if="isShowHidden" style="margin-left:0.5rem;font-weight: bold;" @click="showMoreFunction">more</a>
     </el-col>
   </el-row>
 </template>
@@ -18,7 +18,10 @@ export default {
       required: true
     },
     showMoreFunction: {
-      type: Function
+      type: Function,
+      default: () => {
+        console.log('点击更多')
+      }
     },
     isShowHidden: {
       type: Boolean,

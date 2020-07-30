@@ -1,51 +1,64 @@
 <template>
   <div>
     <el-row :gutter="20">
-      <el-col :span="16">
+      <el-col :span="treeSpan">
         <v-org-tree
-          v-if="data"
+          v-if="taskTree"
+          :props="props"
           style="height: 58.5rem;;width: -webkit-fill-available;overflow: auto"
           horizontal
-          :data="data"
+          :data="taskTree"
           collapsable
           expand-all
           @on-expand="onExpand"
+          @on-node-click="nodeClick"
         />
       </el-col>
-      <el-col :span="8">
-        <el-form ref="form" class="chart-wrapper" :model="form" label-width="80px">
-          <DetailHeader header-name="任务概述" :is-show-hidden="false" />
-          <el-form-item label="任务名称" size="mini">
-            {{ form.name }}
-          </el-form-item>
-          <el-form-item label="任务描述" size="mini">
-            {{ form.region }}
-          </el-form-item>
-          <el-form-item label="任务类型" size="mini">
-            {{ form.date1 }}
-          </el-form-item>
-          <el-form-item label="负责人" size="mini">
-            {{ form.date2 }}
-          </el-form-item>
-          <el-form-item label="验收标准" size="mini">
-            {{ form.delivery }}
-          </el-form-item>
-          <el-form-item label="任务权重">
-            {{ form.type }}
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">查看详情</el-button>
-            <el-button>查看下一项</el-button>
-          </el-form-item>
-        </el-form>
-      </el-col>
+      <transition name="el-zoom-in-center">
+        <el-col v-show="detailShow" :span="8">
+          <el-form ref="form" class="chart-wrapper" :model="form" label-width="80px">
+            <detail-header header-name="任务概述" :is-show-hidden="false" />
+            <el-form-item label="任务名称" size="mini">
+              {{ form.name }}
+            </el-form-item>
+            <el-form-item label="任务描述" size="mini">
+              {{ form.region }}
+            </el-form-item>
+            <el-form-item label="任务类型" size="mini">
+              {{ form.date1 }}
+            </el-form-item>
+            <el-form-item label="负责人" size="mini">
+              {{ form.date2 }}
+            </el-form-item>
+            <el-form-item label="验收标准" size="mini">
+              {{ form.delivery }}
+            </el-form-item>
+            <el-form-item label="任务权重">
+              {{ form.type }}
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="onSubmit">查看详情</el-button>
+              <el-button @click="closeDetail">关闭</el-button>
+            </el-form-item>
+          </el-form>
+        </el-col>
+      </transition>
     </el-row>
   </div>
 </template>
 
 <script>
+import { getProjectTaskTree } from '@/api/project'
+import DetailHeader from '@/views/project/components/DetailHeader'
 export default {
-  name: 'OrgTreePage',
+  name: 'ProjectTask',
+  components: { DetailHeader },
+  props: {
+    projectId: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
       form: {
@@ -56,7 +69,8 @@ export default {
         delivery: '任务可分门别类（研发、专利、项目申报、调研等），按照不同类别，可进行产值或绩效的统计任务可分门别类（研发、专利、项目申报、调研等），按照不同类别，可进行产值或绩效的统计',
         type: '20%'
       },
-      data: {
+      props: { id: 'id', label: 'label', children: 'children', expand: 'expand' },
+      taskTree: {
         id: 0,
         label: '度量指标体系',
         children: [
@@ -102,49 +116,7 @@ export default {
                             children: [
                               {
                                 id: 131,
-                                label: '上线失败率',
-                                children: [
-                                  {
-                                    id: 131,
-                                    label: '上线失败率',
-                                    children: [
-                                      {
-                                        id: 131,
-                                        label: '上线失败率',
-                                        children: [
-                                          {
-                                            id: 131,
-                                            label: '上线失败率',
-                                            children: [
-                                              {
-                                                id: 131,
-                                                label: '上线失败率',
-                                                children: [
-                                                  {
-                                                    id: 131,
-                                                    label: '上线失败率',
-                                                    children: [
-                                                      {
-                                                        id: 131,
-                                                        label: '上线失败率',
-                                                        children: [
-                                                          {
-                                                            id: 131,
-                                                            label: '上线失败率'
-                                                          }
-                                                        ]
-                                                      }
-                                                    ]
-                                                  }
-                                                ]
-                                              }
-                                            ]
-                                          }
-                                        ]
-                                      }
-                                    ]
-                                  }
-                                ]
+                                label: '上线失败率'
                               }
                             ]
                           }
@@ -327,10 +299,27 @@ export default {
           }
         ]
       },
-      zoom: 100
+      zoom: 100,
+      detailShow: false,
+      treeSpan: 24
     }
   },
   mounted() {
+    getProjectTaskTree({ projectId: this.projectId }).then(res => {
+      if (res.code === 200) {
+        this.taskTree = res.result
+      } else {
+        this.$message({
+          message: res.message,
+          type: 'error'
+        })
+      }
+    }).catch(res => {
+      this.$message({
+        message: res,
+        type: 'error'
+      })
+    })
   },
   methods: {
     collapse(list) {
@@ -351,6 +340,17 @@ export default {
       } else {
         this.$set(data, 'expand', true)
       }
+    },
+    onSubmit() {
+      console.log('111')
+    },
+    nodeClick(event, data, expand) {
+      this.treeSpan = 16
+      this.detailShow = true
+    },
+    closeDetail() {
+      this.treeSpan = 24
+      this.detailShow = false
     }
   }
 }
