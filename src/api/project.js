@@ -55,3 +55,11 @@ export function getProjectTaskTree(params) {
     params
   })
 }
+
+export function getTaskById(params) {
+  return request({
+    url: '/project/getTaskById',
+    method: 'post',
+    params
+  })
+}
