@@ -84,7 +84,7 @@ export default {
   computed: {
     labelColor(status) {
       return function(status) {
-        if (status === '进行中') { return '#6495ED' } else if (status === '已完成') { return '#90EE90' } else { return '#FF6347' }
+        if (status === 1) { return '#6495ED' } else if (status === 2) { return '#90EE90' } else { return '#FF6347' }
       }
     }
   },

@@ -5,7 +5,7 @@
         <el-tab-pane label="项目概述" name="desc"><project-desc :project-id="projectId" @changeTab="changeTab" /></el-tab-pane>
         <el-tab-pane label="团队管理" name="team"><project-member /></el-tab-pane>
         <el-tab-pane label="项目任务" name="task"><project-task :project-id="projectId" /></el-tab-pane>
-        <el-tab-pane label="项目动态" name="dynamic"><project-dynamic /></el-tab-pane>
+        <el-tab-pane label="项目动态" name="dynamic"><project-dynamic :project-id="projectId" /></el-tab-pane>
         <el-tab-pane label="项目评论" name="comment"><project-comment /></el-tab-pane>
         <el-tab-pane label="预算管理" name="budget" />
       </el-tabs>

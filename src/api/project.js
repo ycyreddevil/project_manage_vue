@@ -63,3 +63,11 @@ export function getTaskById(params) {
     params
   })
 }
+
+export function getTaskRecordByProjectId(data) {
+  return request({
+    url: '/project/getTaskRecordByProjectId',
+    method: 'post',
+    data
+  })
+}
