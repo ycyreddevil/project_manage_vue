@@ -71,3 +71,19 @@ export function getTaskRecordByProjectId(data) {
     data
   })
 }
+
+export function getProjectCommentById(params) {
+  return request({
+    url: '/project/getProjectCommentById',
+    method: 'post',
+    params
+  })
+}
+
+export function addProjectComment(data) {
+  return request({
+    url: '/project/addProjectComment',
+    method: 'post',
+    data
+  })
+}

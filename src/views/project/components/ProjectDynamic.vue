@@ -1,11 +1,11 @@
 <template>
   <div class="block">
     <div class="filter-container">
-      <el-link :type="dateType === 0 ? 'primary' : info" style="padding: 10px 10px" @click="queryByDate(0)">所有</el-link>
-      <el-link :type="dateType === 1 ? 'primary' : info" style="padding: 10px 10px" @click="queryByDate(1)">昨天</el-link>
-      <el-link :type="dateType === 2 ? 'primary' : info" style="padding: 10px 10px" @click="queryByDate(2)">今天</el-link>
-      <el-link :type="dateType === 3 ? 'primary' : info" style="padding: 10px 10px" @click="queryByDate(3)">上月</el-link>
-      <el-link :type="dateType === 4 ? 'primary' : info" style="padding: 10px 10px" @click="queryByDate(4)">本月</el-link>
+      <el-link :type="dateType === 0 ? 'primary' : 'info'" style="padding: 10px 10px" @click="queryByDate(0)">所有</el-link>
+      <el-link :type="dateType === 1 ? 'primary' : 'info'" style="padding: 10px 10px" @click="queryByDate(1)">昨天</el-link>
+      <el-link :type="dateType === 2 ? 'primary' : 'info'" style="padding: 10px 10px" @click="queryByDate(2)">今天</el-link>
+      <el-link :type="dateType === 3 ? 'primary' : 'info'" style="padding: 10px 10px" @click="queryByDate(3)">上月</el-link>
+      <el-link :type="dateType === 4 ? 'primary' : 'info'" style="padding: 10px 10px" @click="queryByDate(4)">本月</el-link>
     </div>
     <el-timeline v-loading="loading">
       <el-timeline-item v-for="(time, index) in Object.keys(recordList)" :key="index" :timestamp="time" placement="top">
