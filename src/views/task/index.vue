@@ -5,6 +5,16 @@
       <el-link type="info" style="padding: 0px 10px">未关闭</el-link>
       <el-link type="info" style="padding: 0px 10px">已完成</el-link>
       <el-link type="info" style="padding: 0px 10px">已延期</el-link>
+      <el-date-picker
+        v-model="listQuery.dateRange"
+        class="filter-item"
+        type="daterange"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        value-format="yyyy-MM-dd HH:mm:ss"
+        @change="onPick"
+      />
       <el-input v-model="key" placeholder="任务名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
@@ -30,26 +40,26 @@
           <svg-icon width="1.5em" height="1.5em" :icon-class="row.priority" />
         </template>
       </el-table-column>
-      <el-table-column label="任务名称" width="500" align="center">
+      <el-table-column label="所属项目" width="300" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="showTaskDetail(row.id)">{{ row.name }}</span>
+          <span class="link-type" @click="showTaskDetail(row.id)">{{ row.projectName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="任务名称" width="300" align="center">
+        <template slot-scope="{row}">
+          <span class="link-type" @click="showTaskDetail(row.id)">{{ row.taskName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="状态" width="80">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
-            {{ row.status }}
+            {{ row.status | statusTextFilter }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="指派给" align="center" width="80">
+      <el-table-column label="创建人" align="center" width="80">
         <template slot-scope="{row}">
-          <span>{{ row.userName }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="完成者" align="center" width="80">
-        <template slot-scope="{row}">
-          <span>{{ row.userName }}</span>
+          <span>{{ row.submitterName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="权重比" align="center" width="80">
@@ -57,19 +67,19 @@
           <span>{{ row.weight }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="预计用时" width="80">
+      <el-table-column label="预计开始时间">
         <template slot-scope="{row}">
-          <span>{{ row.time }}</span>
+          <span>{{ row.startTime.replace('T', ' ') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="已消耗" align="center" width="80">
+      <el-table-column label="预计结束时间">
         <template slot-scope="{row}">
-          <span>{{ row.usedTime }}</span>
+          <span>{{ row.endTime.replace('T', ' ') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="%" align="center" width="80">
+      <el-table-column label="完成进度(%)" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.percent }}</span>
+          <span>{{ row.progress }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -89,20 +99,38 @@
         </template>
       </el-table-column>
     </el-table>
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getPageList" />
   </div>
 </template>
 
 <script>
+import { getTaskList } from '@/api/task'
+import Pagination from '@/components/Pagination'
+import waves from '@/directive/waves' // waves directive
 export default {
   name: 'ProjectTask',
+  directives: { waves },
+  components: { Pagination },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        已完成: 'success',
-        开发中: 'primary',
-        已延期: 'danger'
+        0: 'info',
+        1: 'primary',
+        2: 'success',
+        3: 'danger',
+        4: 'warning'
       }
       return statusMap[status]
+    },
+    statusTextFilter(text) {
+      const statusMap = {
+        0: '未开始',
+        1: '进行中',
+        2: '已完成',
+        3: '已延期',
+        4: '已取消'
+      }
+      return statusMap[text]
     }
   },
   data() {
@@ -110,19 +138,67 @@ export default {
       listLoading: false,
       tableKey: 0,
       key: '',
-      list: [
-        { id: 1, priority: '2', name: '开发开发开发开开发开发开发开发开发开发开发开发开发开发开发发开发开发开发开发开发开发开发', status: '开发中', userName: '余尧毅', weight: '20', time: '30天', usedTime: '10天', percent: '10%' },
-        { id: 1, priority: '1', name: '测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试', status: '已完成', userName: '余昌运', weight: '30', time: '40天', usedTime: '20天', percent: '2%' },
-        { id: 1, priority: '4', name: '调研调研调研调研调研调研调研调研调研调研调研调研调研调研调研调研调研调研调研调研调研调研', status: '已延期', userName: '杨海明', weight: '10', time: '50天', usedTime: '30天', percent: '30%' }
-      ]
+      list: [],
+      total: 0,
+      listQuery: {
+        page: 1,
+        limit: 20,
+        title: undefined,
+        type: undefined,
+        sort: '+id',
+        dateRange: [],
+        startTime: undefined,
+        endTime: undefined
+      }
     }
   },
+  mounted() {
+    getTaskList().then(res => {
+      if (res.code === 200) {
+        this.list = JSON.parse(res.result)
+      } else {
+        this.$message({
+          message: res.message,
+          type: 'error'
+        })
+      }
+    }).catch(res => {
+      this.$message({
+        message: res,
+        type: 'error'
+      })
+    })
+  },
   methods: {
+    getPageList() {
+      getTaskList().then(res => {
+        if (res.code === 200) {
+          this.list = JSON.parse(res.result)
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'error'
+          })
+        }
+      }).catch(res => {
+        this.$message({
+          message: res,
+          type: 'error'
+        })
+      })
+    },
+    handleFilter() {
+
+    },
     handleModifyStatus() {},
     showTaskDetail() {
       this.$router.push('/task/detail')
     },
-    addMember() {}
+    addMember() {},
+    onPick(dateRange) {
+      this.listQuery.startTime = dateRange[0]
+      this.listQuery.endTime = dateRange[1]
+    }
   }
 }
 </script>

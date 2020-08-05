@@ -39,3 +39,51 @@ export function addOrUpdateProjectMember(data) {
     data
   })
 }
+
+export function getProjectMemberById(params) {
+  return request({
+    url: '/project/getProjectMemberById',
+    method: 'post',
+    params
+  })
+}
+
+export function getProjectTaskTree(params) {
+  return request({
+    url: '/project/getProjectTaskTree',
+    method: 'post',
+    params
+  })
+}
+
+export function getTaskById(params) {
+  return request({
+    url: '/project/getTaskById',
+    method: 'post',
+    params
+  })
+}
+
+export function getTaskRecordByProjectId(data) {
+  return request({
+    url: '/project/getTaskRecordByProjectId',
+    method: 'post',
+    data
+  })
+}
+
+export function getProjectCommentById(params) {
+  return request({
+    url: '/project/getProjectCommentById',
+    method: 'post',
+    params
+  })
+}
+
+export function addProjectComment(data) {
+  return request({
+    url: '/project/addProjectComment',
+    method: 'post',
+    data
+  })
+}

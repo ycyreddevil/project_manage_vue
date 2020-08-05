@@ -2,12 +2,12 @@
   <div class="dashboard-editor-container">
     <div>
       <el-tabs v-model="activeName">
-        <el-tab-pane label="项目概述" name="desc"><project-desc :project-id="projectId" /></el-tab-pane>
+        <el-tab-pane label="项目概述" name="desc"><project-desc :project-id="projectId" @changeTab="changeTab" /></el-tab-pane>
         <el-tab-pane label="团队管理" name="team"><project-member /></el-tab-pane>
-        <el-tab-pane label="项目任务" name="task"><project-task /></el-tab-pane>
-        <el-tab-pane label="项目动态" name="dynamic"><project-dynamic /></el-tab-pane>
-        <el-tab-pane label="项目评论" name="comment"><project-comment /></el-tab-pane>
-        <el-tab-pane label="预算管理" name="budget" />
+        <el-tab-pane label="项目任务" name="task"><project-task :project-id="projectId" /></el-tab-pane>
+        <el-tab-pane label="项目动态" name="dynamic"><project-dynamic :project-id="projectId" /></el-tab-pane>
+        <el-tab-pane label="项目评论" name="comment"><project-comment :project-id="projectId" /></el-tab-pane>
+        <el-tab-pane label="预算管理" name="budget"><project-budget /></el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -18,9 +18,10 @@ import ProjectMember from '@/views/project/components/ProjectMember'
 import ProjectTask from '@/views/project/components/ProjectTask'
 import ProjectDynamic from '@/views/project/components/ProjectDynamic'
 import ProjectComment from '@/views/project/components/ProjectComment'
+import ProjectBudget from '@/views/project/components/ProjectBudget'
 export default {
   name: 'ProjectDetail',
-  components: { ProjectComment, ProjectDynamic, ProjectTask, ProjectMember, ProjectDesc },
+  components: { ProjectBudget, ProjectComment, ProjectDynamic, ProjectTask, ProjectMember, ProjectDesc },
   data() {
     return {
       activeName: 'desc',
@@ -35,8 +36,8 @@ export default {
     this.projectId = this.$route.params.id
   },
   methods: {
-    showCreatedTimes() {
-
+    changeTab(name) {
+      this.activeName = name
     }
   }
 }
