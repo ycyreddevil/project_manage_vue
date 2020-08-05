@@ -337,7 +337,7 @@ export default {
     },
     showProjectDetail(id) {
       // 跳转到项目详情页
-      this.$router.push('/project/detail/1')
+      this.$router.push('/project/detail/' + id)
     }
   }
 }

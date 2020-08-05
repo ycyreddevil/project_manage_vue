@@ -66,6 +66,8 @@ export default {
             message: '评论成功',
             type: 'success'
           })
+          // 把新增的评论加到列表中 用于回显
+          this.comments.push(res.result)
         } else {
           this.$message({
             message: res.message,
@@ -81,6 +83,8 @@ export default {
             message: '评论成功',
             type: 'success'
           })
+          // 把新增的评论加到列表中 用于回显
+          this.comments.find(u => u.id === parentId)['childrenList'].push(res.result)
         } else {
           this.$message({
             message: res.message,
