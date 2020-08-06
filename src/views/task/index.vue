@@ -1,10 +1,12 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-link type="info" style="padding: 0px 10px">所有</el-link>
-      <el-link type="info" style="padding: 0px 10px">未关闭</el-link>
-      <el-link type="info" style="padding: 0px 10px">已完成</el-link>
-      <el-link type="info" style="padding: 0px 10px">已延期</el-link>
+      <el-link :type="listQuery.type === '' ? 'primary' : 'info'" style="padding: 0px 10px" @click="queryByType('')">全部</el-link>
+      <el-link :type="listQuery.type === '0' ? 'primary' : 'info'" style="padding: 0px 10px" @click="queryByType('0')">未开始</el-link>
+      <el-link :type="listQuery.type === '1' ? 'primary' : 'info'" style="padding: 0px 10px" @click="queryByType('1')">进行中</el-link>
+      <el-link :type="listQuery.type === '2' ? 'primary' : 'info'" style="padding: 0px 10px" @click="queryByType('2')">已完成</el-link>
+      <el-link :type="listQuery.type === '3' ? 'primary' : 'info'" style="padding: 0px 10px" @click="queryByType('3')">已延期</el-link>
+      <el-link :type="listQuery.type === '4' ? 'primary' : 'info'" style="padding: 0px 10px" @click="queryByType('4')">已取消</el-link>
       <el-date-picker
         v-model="listQuery.dateRange"
         class="filter-item"
@@ -15,7 +17,7 @@
         value-format="yyyy-MM-dd HH:mm:ss"
         @change="onPick"
       />
-      <el-input v-model="key" placeholder="任务名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.key" placeholder="任务名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
@@ -57,14 +59,14 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="创建人" align="center" width="80">
+      <el-table-column label="创建人" align="center">
         <template slot-scope="{row}">
           <span>{{ row.submitterName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="权重比" align="center" width="80">
         <template slot-scope="{row}">
-          <span>{{ row.weight }}</span>
+          <span>{{ row.weight }}%</span>
         </template>
       </el-table-column>
       <el-table-column label="预计开始时间">
@@ -82,20 +84,26 @@
           <span>{{ row.progress }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="250">
         <template slot-scope="{row}">
-          <el-button size="mini" @click="handleModifyStatus(row,'draft')">
-            删除
-          </el-button>
-          <el-button size="mini" @click="handleModifyStatus(row,'draft')">
-            删除
-          </el-button>
-          <el-button size="mini" @click="handleModifyStatus(row,'draft')">
-            删除
-          </el-button>
-          <el-button size="mini" @click="handleModifyStatus(row,'draft')">
-            删除
-          </el-button>
+          <el-button type="text" @click="beginTask(row.id)">开始</el-button>
+          <el-button type="text" @click="endTask">结束</el-button>
+          <el-button type="text" @click="cancelTask">取消</el-button>
+          <el-button type="text" @click="editTask">编辑</el-button>
+          <el-button type="text" @click="submitRecord">提交任务完成情况</el-button>
+          <el-button type="text">查看子任务</el-button>
+          <!--          <el-button size="mini" @click="handleModifyStatus(row,'draft')">-->
+          <!--            删除-->
+          <!--          </el-button>-->
+          <!--          <el-button size="mini" @click="handleModifyStatus(row,'draft')">-->
+          <!--            删除-->
+          <!--          </el-button>-->
+          <!--          <el-button size="mini" @click="handleModifyStatus(row,'draft')">-->
+          <!--            删除-->
+          <!--          </el-button>-->
+          <!--          <el-button size="mini" @click="handleModifyStatus(row,'draft')">-->
+          <!--            删除-->
+          <!--          </el-button>-->
         </template>
       </el-table-column>
     </el-table>
@@ -104,12 +112,13 @@
 </template>
 
 <script>
-import { getTaskList } from '@/api/task'
+import { getTaskList, beginTask, endTask } from '@/api/task'
 import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves' // waves directive
+import permission from '@/directive/permission/permission'
 export default {
   name: 'ProjectTask',
-  directives: { waves },
+  directives: { waves, permission },
   components: { Pagination },
   filters: {
     statusFilter(status) {
@@ -144,35 +153,29 @@ export default {
         page: 1,
         limit: 20,
         title: undefined,
-        type: undefined,
+        type: '',
         sort: '+id',
         dateRange: [],
         startTime: undefined,
         endTime: undefined
-      }
+      },
+      approverId: ''
     }
   },
   mounted() {
-    getTaskList().then(res => {
-      if (res.code === 200) {
-        this.list = JSON.parse(res.result)
-      } else {
-        this.$message({
-          message: res.message,
-          type: 'error'
-        })
-      }
-    }).catch(res => {
-      this.$message({
-        message: res,
-        type: 'error'
-      })
-    })
+    this.getPageList()
   },
   methods: {
+    queryByType(type) {
+      this.listQuery.type = type
+      this.getPageList()
+    },
     getPageList() {
-      getTaskList().then(res => {
+      this.listLoading = true
+      getTaskList(this.listQuery).then(res => {
+        this.listLoading = false
         if (res.code === 200) {
+          this.total = res.total
           this.list = JSON.parse(res.result)
         } else {
           this.$message({
@@ -181,6 +184,7 @@ export default {
           })
         }
       }).catch(res => {
+        this.listLoading = false
         this.$message({
           message: res,
           type: 'error'
@@ -188,7 +192,7 @@ export default {
       })
     },
     handleFilter() {
-
+      this.getPageList()
     },
     handleModifyStatus() {},
     showTaskDetail() {
@@ -198,6 +202,85 @@ export default {
     onPick(dateRange) {
       this.listQuery.startTime = dateRange[0]
       this.listQuery.endTime = dateRange[1]
+    },
+    beginTask(taskId) {
+      this.$confirm('是否确定开始该任务', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        beginTask({ taskId: taskId }).then(res => {
+          if (res.code === 200) {
+            this.$message({
+              message: '操作成功',
+              type: 'success'
+            })
+            const temp = this.list.find(item => item.id === taskId)
+            temp.status = 1
+            const index = this.list.findIndex(item => item.id === taskId)
+            this.list = this.list.splice(index, 1, temp)
+          } else {
+            this.$message({
+              message: res.message,
+              type: 'error'
+            })
+          }
+        }).catch(res => {
+          this.$message({
+            message: res,
+            type: 'error'
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
+    },
+    endTask(taskId) {
+      this.$confirm('是否结束此任务', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }.then(res => {
+        endTask({ taskId: taskId, approverId: this.approverId }).then(res => {
+          if (res.code === 200) {
+            this.$message({
+              message: '操作成功',
+              type: 'success'
+            })
+            const temp = this.list.find(item => item.id === taskId)
+            temp.status = 2
+            const index = this.list.findIndex(item => item.id === taskId)
+            this.list = this.list.splice(index, 1, temp)
+          } else {
+            this.$message({
+              message: res.message,
+              type: 'error'
+            })
+          }
+        }).catch(res => {
+          this.$message({
+            message: res,
+            type: 'error'
+          })
+        })
+      })).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
+    },
+    editTask() {
+
+    },
+    cancelTask() {
+
+    },
+    submitRecord() {
+
     }
   }
 }
