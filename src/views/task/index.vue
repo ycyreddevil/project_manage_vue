@@ -114,7 +114,7 @@
     </el-dialog>
     <!-- 子任务弹出框 -->
     <el-drawer
-      size="50%"
+      size="70%"
       title="我是标题"
       :with-header="false"
       :visible.sync="drawerVisible"
@@ -367,11 +367,13 @@ export default {
       this.chooseTaskId = taskId
     },
     showChildrenTask(taskId) {
+      console.log(taskId)
       this.chooseTaskId = taskId
       getChilrenTaskTree({ taskId: taskId }).then(res => {
         if (res.code === 200) {
           this.childrenTaskTree = res.result
           this.drawerVisible = true
+          console.log(this.childrenTaskTree)
         } else {
           this.$message({
             message: res.message,

@@ -79,8 +79,16 @@ export default {
   computed: {
     labelColor(status) {
       return function(status) {
-        if (status === 1) { return '#6495ED' } else if (status === 2) { return '#90EE90' } else { return '#FF6347' }
+        if (status === 0) { return '#C0C0C0' } else if (status === 1) { return '#6495ED' } else if (status === 2) { return '#90EE90' } else if (status === 3) { return '#FF6347' } else { return '#F4A460' }
       }
+    }
+  },
+  watch: {
+    childrenTaskTree: {
+      handler(newValue, oldValue) {
+        this.taskTree = newValue
+      },
+      deep: true
     }
   },
   created() {
@@ -130,6 +138,7 @@ export default {
       console.log('111')
     },
     nodeClick(event, data, expand) {
+      console.log(data)
       if (data.id === 0) { return }
       this.treeSpan = 16
       this.detailShow = true
