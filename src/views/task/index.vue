@@ -86,40 +86,56 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="250">
         <template slot-scope="{row}">
-          <el-button type="text" @click="beginTask(row.id)">开始</el-button>
-          <el-button type="text" @click="endTask">结束</el-button>
-          <el-button type="text" @click="cancelTask">取消</el-button>
-          <el-button type="text" @click="editTask">编辑</el-button>
-          <el-button type="text" @click="submitRecord">提交任务完成情况</el-button>
-          <el-button type="text">查看子任务</el-button>
-          <!--          <el-button size="mini" @click="handleModifyStatus(row,'draft')">-->
-          <!--            删除-->
-          <!--          </el-button>-->
-          <!--          <el-button size="mini" @click="handleModifyStatus(row,'draft')">-->
-          <!--            删除-->
-          <!--          </el-button>-->
-          <!--          <el-button size="mini" @click="handleModifyStatus(row,'draft')">-->
-          <!--            删除-->
-          <!--          </el-button>-->
-          <!--          <el-button size="mini" @click="handleModifyStatus(row,'draft')">-->
-          <!--            删除-->
-          <!--          </el-button>-->
+          <el-button v-permission="['项目成员']" type="text" @click="beginTask(row.id)">开始</el-button>
+          <!--          <el-button type="text" v-permission="['项目成员']" @click="showEndTaskDialog(row.id)">结束</el-button>-->
+          <el-button v-permission="['项目成员']" type="text" @click="cancelTask(row.id)">取消</el-button>
+          <el-button v-permission="['admin', '项目经理']" type="text" @click="editTask">编辑</el-button>
+          <el-button v-permission="['项目经理', '项目成员']" type="text" @click="submitRecord">提交任务完成情况</el-button>
+          <el-button v-permission="['admin', '项目成员', '项目经理']" type="text" @click="showChildrenTask(row.id)">查看子任务</el-button>
         </template>
       </el-table-column>
     </el-table>
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getPageList" />
+    <!-- 选择上级审批人 -->
+    <el-dialog width="25%" :visible.sync="dialogVisible" title="选择审批人来对结束任务操作进行审批">
+      <el-select
+        ref="selectCharge"
+        v-model="approverId"
+        default-first-option
+        placeholder="请选择项目负责人"
+        @change="changeCharge"
+      >
+        <el-option v-for="(item,index) in userList" :key="item+index" :label="item.userName" :value="item.userId" />
+      </el-select>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="endTask">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 子任务弹出框 -->
+    <el-drawer
+      size="50%"
+      title="我是标题"
+      :with-header="false"
+      :visible.sync="drawerVisible"
+      direction="btt"
+      show-close
+      modal
+    ><project-task :children-task-tree="childrenTaskTree" /></el-drawer>
   </div>
 </template>
 
 <script>
-import { getTaskList, beginTask, endTask } from '@/api/task'
+import { getTaskList, beginTask, endTask, cancelTask, getChilrenTaskTree } from '@/api/task'
+import { findApproverList } from '@/api/user'
 import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves' // waves directive
 import permission from '@/directive/permission/permission'
+import ProjectTask from '@/views/project/components/ProjectTask'
 export default {
-  name: 'ProjectTask',
+  name: 'TaskIndex',
   directives: { waves, permission },
-  components: { Pagination },
+  components: { Pagination, ProjectTask },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -159,7 +175,12 @@ export default {
         startTime: undefined,
         endTime: undefined
       },
-      approverId: ''
+      approverId: '',
+      dialogVisible: false,
+      userList: [],
+      chooseTaskId: undefined,
+      drawerVisible: false,
+      childrenTaskTree: {}
     }
   },
   mounted() {
@@ -238,20 +259,61 @@ export default {
         })
       })
     },
-    endTask(taskId) {
-      this.$confirm('是否结束此任务', '提示', {
+    endTask() {
+      this.dialogVisible = false
+      this.$confirm('是否完成此任务', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }.then(res => {
-        endTask({ taskId: taskId, approverId: this.approverId }).then(res => {
+      }).then(() => {
+        endTask({ taskId: Number.parseInt(this.chooseTaskId), approverId: Number.parseInt(this.approverId) }).then(res => {
+          console.log(res)
+          if (res.code === 200) {
+            this.$message({
+              message: '操作成功',
+              type: 'success'
+            })
+            const temp = this.list.find(item => item.id === this.chooseTaskId)
+            temp.status = 2
+            const index = this.list.findIndex(item => item.id === this.chooseTaskId)
+            this.list = this.list.splice(index, 1, temp)
+          } else {
+            this.$message({
+              message: res.message,
+              type: 'error'
+            })
+          }
+        }).catch(res => {
+          console.log(res)
+          this.$message({
+            message: res,
+            type: 'error'
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
+    },
+    editTask() {
+
+    },
+    cancelTask(taskId) {
+      this.$confirm('是否确定取消该任务', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        cancelTask({ taskId: taskId }).then(res => {
           if (res.code === 200) {
             this.$message({
               message: '操作成功',
               type: 'success'
             })
             const temp = this.list.find(item => item.id === taskId)
-            temp.status = 2
+            temp.status = 4
             const index = this.list.findIndex(item => item.id === taskId)
             this.list = this.list.splice(index, 1, temp)
           } else {
@@ -266,21 +328,62 @@ export default {
             type: 'error'
           })
         })
-      })).catch(() => {
+      }).catch(() => {
         this.$message({
           type: 'info',
           message: '已取消'
         })
       })
     },
-    editTask() {
-
-    },
-    cancelTask() {
-
-    },
     submitRecord() {
 
+    },
+    getRemoteApproverList() {
+      findApproverList().then(res => {
+        if (res.code === 200) {
+          this.userList = res.result
+        } else {
+          this.$message({
+            message: res,
+            type: 'error'
+          })
+        }
+      }).catch(res => {
+        this.$message({
+          message: res,
+          type: 'error'
+        })
+      })
+    },
+    changeCharge(userId) {
+      const user = this.userList.find(item => {
+        return item.userId === userId
+      })
+      console.log(user)
+    },
+    showEndTaskDialog(taskId) {
+      this.getRemoteApproverList()
+      this.dialogVisible = true
+      this.chooseTaskId = taskId
+    },
+    showChildrenTask(taskId) {
+      this.chooseTaskId = taskId
+      getChilrenTaskTree({ taskId: taskId }).then(res => {
+        if (res.code === 200) {
+          this.childrenTaskTree = res.result
+          this.drawerVisible = true
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'error'
+          })
+        }
+      }).catch(res => {
+        this.$message({
+          message: res,
+          type: 'error'
+        })
+      })
     }
   }
 }

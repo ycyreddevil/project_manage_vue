@@ -46,3 +46,10 @@ export function findUsers(params) {
     params
   })
 }
+
+export function findApproverList() {
+  return request({
+    url: '/user/findApproverList',
+    method: 'post'
+  })
+}

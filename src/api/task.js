@@ -21,3 +21,20 @@ export function endTask(params) {
     params
   })
 }
+
+export function cancelTask(params) {
+  return request({
+    url: '/task/cancelTask',
+    method: 'post',
+    params
+  })
+}
+
+export function getChilrenTaskTree(params) {
+  return request({
+    url: '/task/getChilrenTaskTree',
+    method: 'post',
+    params
+  })
+}
+
