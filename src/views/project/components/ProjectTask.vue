@@ -60,20 +60,15 @@ export default {
   name: 'ProjectTask',
   props: {
     projectId: {
-      type: String,
-      required: true
+      type: String
+    },
+    childrenTaskTree: {
+      type: Object
     }
   },
   data() {
     return {
-      form: {
-        name: '绩效考核与产值',
-        region: '任务可分门别类（研发、专利、项目申报、调研等），按照不同类别，可进行产值或绩效的统计',
-        date1: '研发',
-        date2: '余尧毅',
-        delivery: '任务可分门别类（研发、专利、项目申报、调研等），按照不同类别，可进行产值或绩效的统计任务可分门别类（研发、专利、项目申报、调研等），按照不同类别，可进行产值或绩效的统计',
-        type: '20%'
-      },
+      form: {},
       props: { id: 'id', label: 'label', children: 'children', expand: 'expand' },
       taskTree: {},
       zoom: 100,
@@ -88,22 +83,28 @@ export default {
       }
     }
   },
+  created() {
+  },
   mounted() {
-    getProjectTaskTree({ projectId: this.projectId }).then(res => {
-      if (res.code === 200) {
-        this.taskTree = res.result
-      } else {
+    if (this.childrenTaskTree && Object.keys(this.childrenTaskTree).length > 0) {
+      this.taskTree = this.childrenTaskTree
+    } else {
+      getProjectTaskTree({ projectId: this.projectId }).then(res => {
+        if (res.code === 200) {
+          this.taskTree = res.result
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'error'
+          })
+        }
+      }).catch(res => {
         this.$message({
-          message: res.message,
+          message: res,
           type: 'error'
         })
-      }
-    }).catch(res => {
-      this.$message({
-        message: res,
-        type: 'error'
       })
-    })
+    }
   },
   methods: {
     collapse(list) {

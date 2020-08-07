@@ -73,7 +73,7 @@ const actions = {
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_WECHATUSERID', wechatUserId)
-        commit('SET_ROLES', role)
+        commit('SET_ROLES', role.map(item => { return item.name }))
         resolve(result)
       }).catch(error => {
         reject(error)
