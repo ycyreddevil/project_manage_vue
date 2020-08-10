@@ -10,7 +10,7 @@
           </el-col>
           <el-col :span="11" style="overflow-y: auto">
             <div class="chart-wrapper">
-              <project-dynamic-simple />
+              <task-dynamic-simple :task-id="taskId" v-on="$listeners" />
             </div>
           </el-col>
         </el-row>
@@ -22,27 +22,32 @@
           </el-col>
           <el-col :span="11" style="overflow-y: auto">
             <div class="chart-wrapper">
-              <project-history-simple />
+              <task-history-simple :task-id="taskId" />
             </div>
           </el-col>
         </el-row>
       </el-col>
       <el-col :span="8">
-        <detail-content />
+        <detail-content :task-id="taskId" />
       </el-col>
     </el-row>
   </div>
 </template>
 <script>
-import ProjectHistorySimple from '@/views/project/components/ProjectHistorySimple'
-import ProjectDynamicSimple from '@/views/project/components/ProjectDynamicSimple'
+import TaskDynamicSimple from '@/views/task/components/TaskDynamicSimple'
 import BarChart from '@/views/dashboard/admin/components/BarChart'
 import DetailContent from '@/views/task/components/DetailContent'
 import TaskBudgetSimple from '@/views/task/components/TaskBudgetSimple'
+import TaskHistorySimple from '@/views/task/components/TaskHistorySimple'
 
 export default {
   name: 'TaskDesc',
-  components: { TaskBudgetSimple, ProjectHistorySimple, ProjectDynamicSimple, BarChart, DetailContent }
+  components: { TaskHistorySimple, TaskBudgetSimple, BarChart, DetailContent, TaskDynamicSimple },
+  props: {
+    taskId: {
+      type: String
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>

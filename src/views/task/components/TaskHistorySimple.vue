@@ -2,30 +2,30 @@
   <div>
     <detail-header header-name="历史记录" :is-show-hidden="false" />
     <ul>
-      <li>{{ project.createTime }}, 由 {{ project.submitterName }} 创建。</li>
+      <li>{{ task.createTime }}, 由 {{ task.submitterName }} 创建。</li>
     </ul>
   </div>
 </template>
 <script>
-import { getProjectById } from '@/api/project'
+import { getTaskById } from '@/api/project'
 import DetailHeader from '@/views/project/components/DetailHeader'
 export default {
-  name: 'ProjectHistorySimple',
+  name: 'TaskHistorySimple',
   components: { DetailHeader },
   props: {
-    projectId: {
+    taskId: {
       type: String
     }
   },
   data() {
     return {
-      project: {}
+      task: {}
     }
   },
   mounted() {
-    getProjectById({ id: this.projectId }).then(res => {
+    getTaskById({ taskId: this.taskId }).then(res => {
       if (res.code === 200) {
-        this.project = res.result
+        this.task = res.result
       } else {
         this.$message({
           message: res.message,

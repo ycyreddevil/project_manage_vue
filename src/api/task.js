@@ -38,3 +38,50 @@ export function getChilrenTaskTree(params) {
   })
 }
 
+export function getTaskById(params) {
+  return request({
+    url: '/task/getTaskById',
+    method: 'post',
+    params
+  })
+}
+
+export function getTaskRecordByTaskId(data) {
+  return request({
+    url: '/task/getTaskRecordByTaskId',
+    method: 'post',
+    data
+  })
+}
+
+export function getTaskCommentById(params) {
+  return request({
+    url: '/task/getTaskCommentById',
+    method: 'post',
+    params
+  })
+}
+
+export function addTaskComment(data) {
+  return request({
+    url: '/task/addTaskComment',
+    method: 'post',
+    data
+  })
+}
+
+export function getLatestTaskRecordByTaskId(params) {
+  return request({
+    url: '/task/getLatestTaskRecordByTaskId',
+    method: 'post',
+    params
+  })
+}
+
+export function addOrUpdateTask(data) {
+  return request({
+    url: '/task/addOrUpdateTask',
+    method: 'post',
+    data
+  })
+}

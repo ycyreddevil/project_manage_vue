@@ -243,24 +243,6 @@ export default {
     handleCreate() {
       this.$router.push('/project/addorupdate/-1')
     },
-    createData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
-          // createArticle(this.temp).then(() => {
-          //   this.list.unshift(this.temp)
-          //   this.dialogFormVisible = false
-          //   this.$notify({
-          //     title: 'Success',
-          //     message: 'Created Successfully',
-          //     type: 'success',
-          //     duration: 2000
-          //   })
-          // })
-        }
-      })
-    },
     handleUpdate(row) {
       this.$confirm('是否编辑该项目', '提示', {
         confirmButtonText: '确定',

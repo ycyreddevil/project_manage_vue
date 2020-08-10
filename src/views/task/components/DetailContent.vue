@@ -1,27 +1,30 @@
 <template>
   <div class="detail_content">
-    <el-form ref="form" class="chart-wrapper" :model="form" label-width="80px">
+    <el-form ref="task" class="chart-wrapper" :model="task" label-width="80px">
       <DetailHeader header-name="任务概述" :is-show-hidden="false" />
       <el-form-item label="任务名称" size="mini">
-        {{ form.name }}
+        {{ task.taskName }}
       </el-form-item>
       <el-form-item label="任务描述" size="mini">
-        {{ form.region }}
+        {{ task.taskDesc }}
       </el-form-item>
       <el-form-item label="任务类型" size="mini">
-        {{ form.date1 }}
+        {{ task.taskType }}
       </el-form-item>
       <el-form-item label="负责人" size="mini">
-        {{ form.date2 }}
+        {{ task.chargeUserName }}
       </el-form-item>
       <el-form-item label="验收标准" size="mini">
-        {{ form.delivery }}
+        {{ task.acceptanceCriteria }}
       </el-form-item>
       <el-form-item label="任务权重">
-        {{ form.type }}
+        {{ task.weight }}
+      </el-form-item>
+      <el-form-item label="需求描述">
+        {{ task.requireDesc }}
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">查看详情</el-button>
+        <el-button type="primary" @click="editTask">查看详情</el-button>
         <el-button>查看下一项</el-button>
       </el-form-item>
     </el-form>
@@ -29,26 +32,42 @@
 </template>
 <script>
 import DetailHeader from '@/views/project/components/DetailHeader'
+import { getTaskById } from '@/api/task'
 export default {
   name: 'TaskDetailContent',
   components: {
     DetailHeader
   },
-  data() {
-    return {
-      form: {
-        name: '绩效考核与产值',
-        region: '任务可分门别类（研发、专利、项目申报、调研等），按照不同类别，可进行产值或绩效的统计',
-        date1: '研发',
-        date2: '余尧毅',
-        delivery: '任务可分门别类（研发、专利、项目申报、调研等），按照不同类别，可进行产值或绩效的统计任务可分门别类（研发、专利、项目申报、调研等），按照不同类别，可进行产值或绩效的统计',
-        type: '20%'
-      }
+  props: {
+    taskId: {
+      type: String
     }
   },
+  data() {
+    return {
+      task: {}
+    }
+  },
+  mounted() {
+    getTaskById({ taskId: this.taskId }).then(res => {
+      if (res.code === 200) {
+        this.task = res.result
+      } else {
+        this.$message({
+          message: res.message,
+          type: 'error'
+        })
+      }
+    }).catch(res => {
+      this.$message({
+        message: res,
+        type: 'error'
+      })
+    })
+  },
   methods: {
-    onSubmit() {
-      console.log('submit!')
+    editTask() {
+      this.$router.push('/task/addorupdate/' + this.taskId)
     },
     showMoreDynamic() {
       console.log('222')

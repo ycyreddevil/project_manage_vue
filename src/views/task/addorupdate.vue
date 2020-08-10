@@ -11,32 +11,32 @@
       </sticky>
       <div class="createPost-main-container">
         <el-row>
-          <Warning />
+          <Warning text="请填写任务名称、任务权重、任务时间、任务类别、任务负责人、任务描述、任务验收标准、任务需求来对该任务进行新增或修改。" />
           <el-col :span="24">
             <el-form-item style="margin-bottom: 40px;" prop="title">
-              <MDinput v-model="postForm.name" :maxlength="100" name="name" required placeholder="请输入项目名称">
-                项目名称
+              <MDinput v-model="postForm.taskName" :maxlength="100" name="name" required placeholder="请输入任务名称">
+                任务名称
               </MDinput>
             </el-form-item>
 
             <div class="postInfo-container">
               <el-row>
                 <el-col :span="8">
-                  <el-form-item label-width="110px" label="项目编号:" class="postInfo-container-item">
-                    <el-input v-model="postForm.code" placeholder="请输入项目编号" />
+                  <el-form-item label-width="110px" label="任务权重:" class="postInfo-container-item">
+                    <el-input v-model="postForm.weight" type="number" placeholder="请输入任务权重" />
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="8">
-                  <el-form-item label-width="110px" label="项目类型:" class="postInfo-container-item">
-                    <el-select v-model="postForm.type" default-first-option placeholder="请选择项目类型">
-                      <el-option v-for="(item,index) in projectTypeOptions" :key="item+index" :label="item" :value="item" />
+                  <el-form-item label-width="110px" label="任务类型:" class="postInfo-container-item">
+                    <el-select ref="selectTaskType" v-model="postForm.taskType" default-first-option placeholder="请选择任务类型">
+                      <el-option v-for="(item,index) in taskTypeOptions" :key="item+index" :label="item" :value="item" />
                     </el-select>
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="8">
-                  <el-form-item label-width="110px" label="项目负责人:" class="postInfo-container-item">
+                  <el-form-item label-width="110px" label="任务负责人:" class="postInfo-container-item">
                     <el-select
                       ref="selectCharge"
                       v-model="postForm.chargeUserId"
@@ -45,7 +45,7 @@
                       :remote-method="getRemoteUserList"
                       filterable
                       remote
-                      placeholder="请选择项目负责人"
+                      placeholder="请选择任务负责人"
                       @change="changeCharge"
                     >
                       <el-option v-for="(item,index) in userList" :key="item+index" :label="item.userName" :value="item.userId" />
@@ -65,16 +65,24 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label-width="110px" label="团队名称:" class="postInfo-container-item">
-                    <el-input v-model="postForm.teamName" placeholder="团队名称" />
+                  <el-form-item label-width="110px" label="任务优先级:" class="postInfo-container-item">
+                    <el-select v-model="postForm.priority" default-first-option placeholder="请选择任务优先级">
+                      <el-option v-for="(item,index) in priorityOptions" :key="item+index" :label="item" :value="item" />
+                    </el-select>
                   </el-form-item>
                 </el-col>
               </el-row>
             </div>
           </el-col>
         </el-row>
-        <el-form-item style="margin-bottom: 40px;" label-width="110px" label="项目描述:">
-          <el-input v-model="postForm.desc" rows="3" type="textarea" class="article-textarea" autosize placeholder="请输入项目描述" />
+        <el-form-item style="margin-bottom: 40px;" label-width="110px" label="任务描述:">
+          <el-input v-model="postForm.taskDesc" rows="3" type="textarea" class="article-textarea" autosize placeholder="请输入任务描述" />
+        </el-form-item>
+        <el-form-item style="margin-bottom: 40px;" label-width="110px" label="需求描述:">
+          <el-input v-model="postForm.requireDesc" rows="3" type="textarea" class="article-textarea" autosize placeholder="请输入需求描述" />
+        </el-form-item>
+        <el-form-item style="margin-bottom: 40px;" label-width="110px" label="验收标准:">
+          <el-input v-model="postForm.acceptanceCriteria" rows="3" type="textarea" class="article-textarea" autosize placeholder="请输入验收标准" />
         </el-form-item>
       </div>
     </el-form>
@@ -87,22 +95,28 @@ import Warning from '@/views/project/components/ProjectAddOrUpdateWarning'
 import Sticky from '@/components/Sticky'
 import { validURL } from '@/utils/validate'
 import { findUsers } from '@/api/user'
-import { addOrUpdateProject, getProjectById } from '@/api/project'
+import { getTaskById } from '@/api/project'
+import { addOrUpdateTask } from '@/api/task'
 
 const defaultForm = {
   id: undefined,
-  name: '',
-  code: '',
+  taskName: '',
+  weight: 0,
+  taskType: '',
+  priority: 0,
   startTime: '',
   endTime: '',
   chargeUserId: '',
   chargeUserName: '',
-  desc: '',
-  teamName: ''
+  taskDesc: '',
+  requireDesc: '',
+  acceptanceCriteria: '',
+  parentId: Number.parseInt(localStorage.getItem('parentId')),
+  projectId: Number.parseInt(localStorage.getItem('projectId'))
 }
 
 export default {
-  name: 'ProjectAddOrUpdate',
+  name: 'TaskAddOrUpdate',
   components: { MDinput, Warning, Sticky },
   data() {
     const validateRequire = (rule, value, callback) => {
@@ -139,7 +153,8 @@ export default {
         content: [{ validator: validateRequire }],
         source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
       },
-      projectTypeOptions: ['研发项目', '运维项目', '管理项目'],
+      taskTypeOptions: ['设计', '开发', '测试', '研究', '讨论', '界面'],
+      priorityOptions: [1, 2, 3, 4],
       isSearchLoading: false,
       submitButtonLoading: false,
       draftButtonLoading: false,
@@ -151,10 +166,10 @@ export default {
     const id = this.$route.params.id
     if (id > 0) {
       this.addOrUpdateText = '更新'
-      getProjectById({ id: id }).then(res => {
+      getTaskById({ taskId: id }).then(res => {
         if (res.code === 200) {
           this.postForm = res.result
-          // 处理select数据回显
+          // 处理负责人数据回显
           this.$refs.selectCharge.cachedOptions.push({
             currentLabel: res.result.chargeUserName,
             currentValue: res.result.chargeUserId,
@@ -192,9 +207,9 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        addOrUpdateProject(this.postForm).then(res => {
+        addOrUpdateTask(this.postForm).then(res => {
           if (res.code === 200) {
-            this.$router.push('/project/index')
+            this.$router.push('/task/index')
           } else {
             this.$message({
               message: res.message,

@@ -83,7 +83,7 @@ export default {
       console.log('222')
     },
     editProject() {
-      this.$router.push('/project/addorupdate/4')
+      this.$router.push('/project/addorupdate/' + this.projectId)
     }
   }
 }

@@ -87,3 +87,11 @@ export function addProjectComment(data) {
     data
   })
 }
+
+export function getLatestTaskRecordByProjectId(params) {
+  return request({
+    url: '/project/getLatestTaskRecordByProjectId',
+    method: 'post',
+    params
+  })
+}

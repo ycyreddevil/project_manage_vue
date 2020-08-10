@@ -21,11 +21,11 @@
 </template>
 
 <script>
-import { getTaskRecordByProjectId } from '@/api/project'
+import { getTaskRecordByTaskId } from '@/api/task'
 export default {
-  name: 'ProjectDynamic',
+  name: 'TaskDynamic',
   props: {
-    projectId: {
+    taskId: {
       type: String,
       required: true
     }
@@ -40,7 +40,7 @@ export default {
     }
   },
   mounted() {
-    getTaskRecordByProjectId({ projectOrTaskId: Number.parseInt(this.projectId), startTime: '', endTime: '' }).then(res => {
+    getTaskRecordByTaskId({ projectOrTaskId: Number.parseInt(this.taskId), startTime: '', endTime: '' }).then(res => {
       if (res.code === 200) {
         this.recordList = res.result
       } else {
@@ -76,7 +76,7 @@ export default {
         startTime = now.getFullYear() + '-' + (now.getMonth() + 1) + '-1 00:00:00'
         endTime = now.getFullYear() + '-' + (now.getMonth() + 2) + '-1 00:00:00'
       }
-      getTaskRecordByProjectId({ projectOrTaskId: Number.parseInt(this.projectId), startTime: startTime, endTime: endTime }).then(res => {
+      getTaskRecordByTaskId({ projectOrTaskId: Number.parseInt(this.taskId), startTime: startTime, endTime: endTime }).then(res => {
         if (res.code === 200) {
           this.recordList = res.result
           if (Object.keys(res.result).length === 0) {

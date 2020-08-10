@@ -44,7 +44,7 @@
       </el-table-column>
       <el-table-column label="所属项目" width="300" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="showTaskDetail(row.id)">{{ row.projectName }}</span>
+          <span class="link-type" @click="showProjectDetail(row.id)">{{ row.projectName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="任务名称" width="300" align="center">
@@ -216,8 +216,11 @@ export default {
       this.getPageList()
     },
     handleModifyStatus() {},
-    showTaskDetail() {
-      this.$router.push('/task/detail')
+    showTaskDetail(id) {
+      this.$router.push('/task/detail/' + id)
+    },
+    showProjectDetail(id) {
+      this.$router.push('/project/detail/' + id)
     },
     addMember() {},
     onPick(dateRange) {

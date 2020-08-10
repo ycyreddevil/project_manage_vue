@@ -10,7 +10,7 @@
           </el-col>
           <el-col :span="11" style="overflow-y: auto">
             <div class="chart-wrapper">
-              <project-dynamic-simple />
+              <project-dynamic-simple :project-id="projectId" v-on="$listeners" />
             </div>
           </el-col>
         </el-row>
@@ -22,7 +22,7 @@
           </el-col>
           <el-col :span="11" style="overflow-y: auto">
             <div class="chart-wrapper">
-              <project-history-simple />
+              <project-history-simple :project-id="projectId" />
             </div>
           </el-col>
         </el-row>

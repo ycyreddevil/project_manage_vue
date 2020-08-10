@@ -13,15 +13,15 @@
   </div>
 </template>
 <script>
-import { getLatestTaskRecordByProjectId } from '@/api/project'
+import { getLatestTaskRecordByTaskId } from '@/api/task'
 import DetailHeader from '@/views/project/components/DetailHeader'
 export default {
-  name: 'ProjectDynamicSimple',
+  name: 'TaskDynamicSimple',
   components: {
     DetailHeader
   },
   props: {
-    projectId: {
+    taskId: {
       type: String
     }
   },
@@ -32,7 +32,7 @@ export default {
     }
   },
   mounted() {
-    getLatestTaskRecordByProjectId({ projectId: this.projectId }).then(res => {
+    getLatestTaskRecordByTaskId({ taskId: this.taskId }).then(res => {
       if (res.code === 200) {
         this.recordList = res.result
       } else {

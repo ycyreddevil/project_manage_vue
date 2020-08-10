@@ -46,6 +46,7 @@
             <el-form-item>
               <el-button type="primary" @click="onSubmit">查看详情</el-button>
               <el-button @click="closeDetail">关闭</el-button>
+              <el-button type="success" @click="addChildrenTask(form.id, form.projectId)">新增子任务</el-button>
             </el-form-item>
           </el-form>
         </el-col>
@@ -181,6 +182,11 @@ export default {
         }),
         h('span', data.label)
       ])
+    },
+    addChildrenTask(parentId, projectId) {
+      localStorage.setItem('parentId', parentId)
+      localStorage.setItem('projectId', projectId)
+      this.$router.push('/task/addorupdate/-1')
     }
   }
 }

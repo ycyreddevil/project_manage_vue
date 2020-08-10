@@ -129,6 +129,13 @@ export const constantRoutes = [
         name: 'TaskDetail',
         hidden: true,
         meta: { title: '任务详情页', icon: 'documentation', affix: false, breadcrumb: false }
+      },
+      {
+        path: 'addorupdate/:id',
+        component: () => import('@/views/task/addorupdate'),
+        name: 'TaskAddOrUpdate',
+        hidden: true,
+        meta: { title: '新增编辑任务页', icon: 'documentation', affix: false, breadcrumb: false }
       }
     ]
   }
