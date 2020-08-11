@@ -64,6 +64,11 @@
           <span>{{ row.submitterName }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="负责人" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.chargeUserName }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="权重比" align="center" width="80">
         <template slot-scope="{row}">
           <span>{{ row.weight }}%</span>
@@ -71,12 +76,12 @@
       </el-table-column>
       <el-table-column label="预计开始时间">
         <template slot-scope="{row}">
-          <span>{{ row.startTime.replace('T', ' ') }}</span>
+          <span>{{ row.startTime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="预计结束时间">
         <template slot-scope="{row}">
-          <span>{{ row.endTime.replace('T', ' ') }}</span>
+          <span>{{ row.endTime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="完成进度(%)" align="center">
@@ -89,8 +94,8 @@
           <el-button v-permission="['项目成员']" type="text" @click="beginTask(row.id)">开始</el-button>
           <!--          <el-button type="text" v-permission="['项目成员']" @click="showEndTaskDialog(row.id)">结束</el-button>-->
           <el-button v-permission="['项目成员']" type="text" @click="cancelTask(row.id)">取消</el-button>
-          <el-button v-permission="['admin', '项目经理']" type="text" @click="editTask">编辑</el-button>
-          <el-button v-permission="['项目经理', '项目成员']" type="text" @click="submitRecord">提交任务完成情况</el-button>
+          <el-button v-permission="['admin', '项目经理']" type="text" @click="editTask(row.id)">编辑</el-button>
+          <el-button v-permission="['项目经理', '项目成员']" type="text" @click="submitRecord(row.id)">提交任务完成情况</el-button>
           <el-button v-permission="['admin', '项目成员', '项目经理']" type="text" @click="showChildrenTask(row.id)">查看子任务</el-button>
         </template>
       </el-table-column>
@@ -198,6 +203,7 @@ export default {
         if (res.code === 200) {
           this.total = res.total
           this.list = JSON.parse(res.result)
+          console.log(this.list)
         } else {
           this.$message({
             message: res.message,
@@ -300,8 +306,8 @@ export default {
         })
       })
     },
-    editTask() {
-
+    editTask(taskId) {
+      this.$router.push('/task/addorupdate/' + taskId)
     },
     cancelTask(taskId) {
       this.$confirm('是否确定取消该任务', '提示', {
@@ -338,8 +344,8 @@ export default {
         })
       })
     },
-    submitRecord() {
-
+    submitRecord(id) {
+      this.$router.push('/task/addorupdatetaskrecord/' + id)
     },
     getRemoteApproverList() {
       findApproverList().then(res => {

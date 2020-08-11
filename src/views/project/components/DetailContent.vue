@@ -25,7 +25,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="editProject">编辑</el-button>
-        <el-button>取消</el-button>
+        <el-button @click="back">返回</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -84,6 +84,9 @@ export default {
     },
     editProject() {
       this.$router.push('/project/addorupdate/' + this.projectId)
+    },
+    back() {
+      this.$router.go(-1)
     }
   }
 }

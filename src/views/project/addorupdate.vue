@@ -11,7 +11,7 @@
       </sticky>
       <div class="createPost-main-container">
         <el-row>
-          <Warning />
+          <Warning text="请填写任务名称、任务权重、任务时间、任务类别、任务负责人、任务描述、任务验收标准、任务需求来对该任务进行新增或修改。" />
           <el-col :span="24">
             <el-form-item style="margin-bottom: 40px;" prop="title">
               <MDinput v-model="postForm.name" :maxlength="100" name="name" required placeholder="请输入项目名称">

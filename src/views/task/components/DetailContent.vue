@@ -25,7 +25,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="editTask">查看详情</el-button>
-        <el-button>查看下一项</el-button>
+        <el-button @click="back">返回</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -69,8 +69,8 @@ export default {
     editTask() {
       this.$router.push('/task/addorupdate/' + this.taskId)
     },
-    showMoreDynamic() {
-      console.log('222')
+    back() {
+      this.$router.go(-1)
     }
   }
 }

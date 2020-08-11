@@ -23,7 +23,7 @@
               <el-row>
                 <el-col :span="8">
                   <el-form-item label-width="110px" label="任务权重:" class="postInfo-container-item">
-                    <el-input v-model="postForm.weight" type="number" placeholder="请输入任务权重" />
+                    <el-input-number v-model="postForm.weight" :min="1" :max="100" placeholder="请输入任务权重" />
                   </el-form-item>
                 </el-col>
 

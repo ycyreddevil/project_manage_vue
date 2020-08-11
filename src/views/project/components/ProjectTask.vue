@@ -5,7 +5,7 @@
         <v-org-tree
           v-if="taskTree"
           :props="props"
-          style="height: 58.5rem;;width: -webkit-fill-available;overflow: auto"
+          style="height: 58.5rem;width: -webkit-fill-available;overflow: auto"
           horizontal
           :data="taskTree"
           collapsable
@@ -44,9 +44,10 @@
               {{ form.createTime }}
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="onSubmit">查看详情</el-button>
+              <el-button type="primary" @click="showTaskDetail(form.id)">查看详情</el-button>
               <el-button @click="closeDetail">关闭</el-button>
               <el-button type="success" @click="addChildrenTask(form.id, form.projectId)">新增子任务</el-button>
+              <!--              <el-button type="danger" @click="deleteTask(form.id)">删除子任务</el-button>-->
             </el-form-item>
           </el-form>
         </el-col>
@@ -135,8 +136,8 @@ export default {
         this.$set(data, 'expand', true)
       }
     },
-    onSubmit() {
-      console.log('111')
+    showTaskDetail(id) {
+      this.$router.push('/task/detail/' + id)
     },
     nodeClick(event, data, expand) {
       console.log(data)
@@ -187,6 +188,76 @@ export default {
       localStorage.setItem('parentId', parentId)
       localStorage.setItem('projectId', projectId)
       this.$router.push('/task/addorupdate/-1')
+    },
+    // iterationTaskTree(childrenTask, id) {
+    //   if (childrenTask.length > 0) {
+    //     childrenTask.forEach((v, i) => {
+    //       const temp_children = v.children
+    //       if (v.id === id && temp_children.length > 0) {
+    //         this.$message({
+    //           message: '该任务存在子任务 无法删除',
+    //           type: 'error'
+    //         })
+    //         return false
+    //       } else if (v.id === id && temp_children.length === 0) {
+    //         return true
+    //       } else {
+    //         this.iterationTaskTree(temp_children, id)
+    //       }
+    //     })
+    //   }
+    // },
+    deleteTask(id) {
+      // this.$confirm('是否确定删除该任务', '提示', {
+      //   confirmButtonText: '确定',
+      //   cancelButtonText: '取消',
+      //   type: 'warning'
+      // }).then(() => {
+      //   // 判断是否有子任务 若有子任务则无法删除
+      //   const childrenTask = this.taskTree.children
+      //   if (childrenTask.length > 0) {
+      //     childrenTask.forEach((v, i) => {
+      //       let temp_children = v.children
+      //       temp_children = temp_children.children
+      //       if (temp_children.id === id && temp_children.length > 0) {
+      //         this.$message({
+      //           message: '该任务存在子任务 无法删除',
+      //           type: 'error'
+      //         })
+      //         return false
+      //       } else if (temp_children.id === id && temp_children.length === 0) {
+      //         return true
+      //       } else {
+      //
+      //       }
+      //     })
+      //   }
+      //
+      //
+      //   deleteTask({ taskId: id }).then(res => {
+      //     if (res.code === 200) {
+      //       this.$message({
+      //         message: '删除成功',
+      //         type: 'success'
+      //       })
+      //     } else {
+      //       this.$message({
+      //         message: res,
+      //         type: 'error'
+      //       })
+      //     }
+      //   }).catch(res => {
+      //     this.$message({
+      //       message: res,
+      //       type: 'error'
+      //     })
+      //   })
+      // }).catch(() => {
+      //   this.$message({
+      //     type: 'info',
+      //     message: '已取消'
+      //   })
+      // })
     }
   }
 }

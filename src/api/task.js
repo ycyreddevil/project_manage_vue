@@ -85,3 +85,19 @@ export function addOrUpdateTask(data) {
     data
   })
 }
+
+export function deleteTask(params) {
+  return request({
+    url: '/task/deleteTask',
+    method: 'post',
+    params
+  })
+}
+
+export function addOrUpdateTaskRecord(params) {
+  return request({
+    url: '/task/addOrUpdateTaskRecord',
+    method: 'post',
+    params
+  })
+}
