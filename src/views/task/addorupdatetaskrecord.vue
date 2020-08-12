@@ -1,6 +1,6 @@
 <template>
   <div class="createPost-container">
-    <el-form ref="postForm" :model="postForm" :rules="rules" class="form-container">
+    <el-form ref="postForm" :model="postForm" :rules="rules" class="form-container" label-position="top">
       <sticky :z-index="10" :class-name="'sub-navbar draft'">
         <el-button v-loading="submitButtonLoading" style="margin-left: 10px;" type="success" @click="submitForm">
           提交
@@ -13,24 +13,29 @@
         <el-row>
           <Warning text="请填写完成情况描述以及上传图片或文件作为附件进行任务完成情况审批。" />
         </el-row>
-        <el-form-item prop="content" style="margin-bottom: 30px;">
-          <Tinymce ref="editor" v-model="postForm.content" :height="200" menubar="" />
+        <el-form-item :prop="postForm.desc" style="margin-bottom: 30px" label="完成情况描述:">
+          <Tinymce ref="editor" v-model="postForm.desc" :height="200" menubar="" default-text="请输入完成情况描述" />
         </el-form-item>
-        <el-upload
-          ref="upload"
-          class="upload"
-          action="http://localhost:5555/api/FileUpload/fileUpload"
-          :on-preview="handlePreview"
-          :on-remove="handleRemove"
-          :file-list="fileList"
-          :auto-upload="false"
-          :on-success="handleUploadSuccess"
-          :on-error="handleUploadError"
-        >
-          <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-          <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传文件</el-button>
-          <div slot="tip" class="el-upload__tip">只能上传不超过10m的文件或图片</div>
-        </el-upload>
+        <el-form-item :prop="postForm.percent" style="margin-bottom: 30px;" label="任务占比:">
+          <el-input-number v-model="postForm.percent" :min="0" :max="100" label="请输入该任务占比" />
+        </el-form-item>
+        <el-form-item style="margin-bottom: 30px;" label="附件上传:">
+          <el-upload
+            ref="upload"
+            class="upload"
+            action="http://localhost:5555/api/FileUpload/fileUpload"
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :file-list="fileList"
+            :auto-upload="false"
+            :on-success="handleUploadSuccess"
+            :on-error="handleUploadError"
+          >
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传文件</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传不超过10m的文件或图片</div>
+          </el-upload>
+        </el-form-item>
       </div>
     </el-form>
   </div>
@@ -41,13 +46,14 @@ import Tinymce from '@/components/Tinymce'
 import Warning from '@/views/project/components/ProjectAddOrUpdateWarning'
 import Sticky from '@/components/Sticky/index'
 import { validURL } from '@/utils/validate'
-import { addOrUpdateTask } from '@/api/task'
+import { addOrUpdateTaskRecord } from '@/api/task'
 
 const defaultForm = {
   id: undefined,
   taskId: 0,
   desc: '',
-  attachment: ''
+  attachment: [],
+  percent: 0
 }
 
 export default {
@@ -101,7 +107,7 @@ export default {
     }
   },
   mounted() {
-    const id = this.$route.params.id
+    const id = Number.parseInt(this.$route.params.id)
     this.postForm.taskId = id
     if (id > 0) {
       this.addOrUpdateText = '更新'
@@ -125,11 +131,25 @@ export default {
     } else { this.addOrUpdateText = '新增' }
   },
   methods: {
-    handleUploadSuccess(response, file, fileList) {
-      console.log(response)
+    handleUploadSuccess(res, file, fileList) {
+      if (res.code === 200) {
+        this.$message({
+          message: '上传成功',
+          type: 'success'
+        })
+        this.postForm.attachment.push(res.result)
+      } else {
+        this.$message({
+          message: res.message,
+          type: 'error'
+        })
+      }
     },
-    handleUploadError(response, file, fileList) {
-      console.log(response)
+    handleUploadError(res, file, fileList) {
+      this.$message({
+        message: res.message,
+        type: 'error'
+      })
     },
     submitUpload() {
       this.$refs.upload.submit()
@@ -146,7 +166,8 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        addOrUpdateTask(this.postForm).then(res => {
+        this.postForm.attachment = JSON.stringify(this.postForm.attachment)
+        addOrUpdateTaskRecord(this.postForm).then(res => {
           if (res.code === 200) {
             this.$router.push('/task/index')
           } else {

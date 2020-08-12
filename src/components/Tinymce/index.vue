@@ -1,6 +1,6 @@
 <template>
   <div :class="{fullscreen:fullscreen}" class="tinymce-container" :style="{width:containerWidth}">
-    <textarea :id="tinymceId" class="tinymce-textarea" />
+    <textarea :id="tinymceId" class="tinymce-textarea" :placeholder="defaultText" />
     <div class="editor-custom-btn-container">
       <editorImage color="#1890ff" class="editor-upload-btn" @successCBK="imageSuccessCBK" />
     </div>
@@ -19,6 +19,7 @@ import load from './dynamicLoadScript'
 
 // why use this cdn, detail see https://github.com/PanJiaChen/tinymce-all-in-one
 const tinymceCDN = 'https://cdn.jsdelivr.net/npm/tinymce-all-in-one@4.9.3/tinymce.min.js'
+// const tinymceCDN = 'https://cdn.bootcdn.net/ajax/libs/tinymce/5.4.1/tinymce.min.js'
 
 export default {
   name: 'Tinymce',
@@ -40,6 +41,10 @@ export default {
       default() {
         return []
       }
+    },
+    defaultText: {
+      type: String,
+      default: ''
     },
     menubar: {
       type: String,

@@ -7,7 +7,7 @@
         :key="index"
         :timestamp="record.createTime"
       >
-        {{ record.desc }}
+        <span v-html="record.desc" />
       </el-timeline-item>
     </el-timeline>
   </div>

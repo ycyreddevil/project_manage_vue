@@ -11,8 +11,12 @@
       <el-timeline-item v-for="(time, index) in Object.keys(recordList)" :key="index" :timestamp="time" placement="top">
         <el-card shadow="hover">
           <div v-for="(record,index2) in recordList[time]" :key="index2">
-            <span style="font-weight: bold">{{ record.desc }}</span>
-            <p>{{ record.submitterName }} 提交于 {{ record.createTime }}</p>
+            <span style="font-weight: bold" v-html="record.desc" />
+            <p>{{ record.submitterName }} 提交于 {{ record.createTime }}
+              <el-link type="primary" :href="'http://localhost:5555' + (JSON.parse(record.attachment)[0])">
+                {{ JSON.parse(record.attachment)[0].substring(JSON.parse(record.attachment)[0].lastIndexOf('/')+1, JSON.parse(record.attachment)[0].length-1) }}
+              </el-link>
+            </p>
           </div>
         </el-card>
       </el-timeline-item>
