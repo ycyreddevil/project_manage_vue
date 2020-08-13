@@ -209,7 +209,7 @@ export default {
       }).then(() => {
         addOrUpdateTask(this.postForm).then(res => {
           if (res.code === 200) {
-            this.$router.push('/task/index')
+            this.$router.replace('/task/distribute/' + res.result.id)
           } else {
             this.$message({
               message: res.message,

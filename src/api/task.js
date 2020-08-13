@@ -101,3 +101,19 @@ export function addOrUpdateTaskRecord(data) {
     data
   })
 }
+
+export function getSameLevelTask(params) {
+  return request({
+    url: '/task/getSameLevelTask',
+    method: 'post',
+    params
+  })
+}
+
+export function updateTaskWeight(params) {
+  return request({
+    url: '/task/updateTaskWeight',
+    method: 'post',
+    params
+  })
+}

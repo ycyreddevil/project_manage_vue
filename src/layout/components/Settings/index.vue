@@ -10,7 +10,7 @@
 
       <div class="drawer-item">
         <span>Open Tags-View</span>
-        <el-switch v-model="tagsView" class="drawer-switch" />
+        <!--        <el-switch v-model="tagsView" class="drawer-switch" />-->
       </div>
 
       <div class="drawer-item">
@@ -47,17 +47,17 @@ export default {
         })
       }
     },
-    tagsView: {
-      get() {
-        return this.$store.state.settings.tagsView
-      },
-      set(val) {
-        this.$store.dispatch('settings/changeSetting', {
-          key: 'tagsView',
-          value: val
-        })
-      }
-    },
+    // tagsView: {
+    //   get() {
+    //     return this.$store.state.settings.tagsView
+    //   },
+    //   set(val) {
+    //     this.$store.dispatch('settings/changeSetting', {
+    //       key: 'tagsView',
+    //       value: val
+    //     })
+    //   }
+    // },
     sidebarLogo: {
       get() {
         return this.$store.state.settings.sidebarLogo

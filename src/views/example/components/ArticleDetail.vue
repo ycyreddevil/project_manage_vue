@@ -186,7 +186,7 @@ export default {
         this.postForm.content_short += `   Article Id:${this.postForm.id}`
 
         // set tagsview title
-        this.setTagsViewTitle()
+        // this.setTagsViewTitle()
 
         // set page title
         this.setPageTitle()
@@ -194,11 +194,11 @@ export default {
         console.log(err)
       })
     },
-    setTagsViewTitle() {
-      const title = 'Edit Article'
-      const route = Object.assign({}, this.tempRoute, { title: `${title}-${this.postForm.id}` })
-      this.$store.dispatch('tagsView/updateVisitedView', route)
-    },
+    // setTagsViewTitle() {
+    //   const title = 'Edit Article'
+    //   const route = Object.assign({}, this.tempRoute, { title: `${title}-${this.postForm.id}` })
+    //   this.$store.dispatch('tagsView/updateVisitedView', route)
+    // },
     setPageTitle() {
       const title = 'Edit Article'
       document.title = `${title} - ${this.postForm.id}`

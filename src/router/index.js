@@ -128,21 +128,28 @@ export const constantRoutes = [
         component: () => import('@/views/task/detail'),
         name: 'TaskDetail',
         hidden: true,
-        meta: { title: '任务详情页', icon: 'documentation', affix: false, breadcrumb: false }
+        meta: { title: '任务详情页', icon: 'documentation', affix: false, breadcrumb: false, noCache: true }
       },
       {
         path: 'addorupdate/:id',
         component: () => import('@/views/task/addorupdate'),
         name: 'TaskAddOrUpdate',
         hidden: true,
-        meta: { title: '新增编辑任务页', icon: 'documentation', affix: false, breadcrumb: false }
+        meta: { title: '新增编辑任务页', icon: 'documentation', affix: false, breadcrumb: false, noCache: true }
       },
       {
         path: 'addorupdatetaskrecord/:id',
         component: () => import('@/views/task/addorupdatetaskrecord'),
         name: 'Addorupdatetaskrecord',
         hidden: true,
-        meta: { title: '新增编辑任务完成情况页', icon: 'documentation', affix: false, breadcrumb: false }
+        meta: { title: '新增编辑任务完成情况页', icon: 'documentation', affix: false, breadcrumb: false, noCache: true }
+      },
+      {
+        path: 'distribute/:id',
+        component: () => import('@/views/task/distribute'),
+        name: 'Distribute',
+        hidden: true,
+        meta: { title: '任务比率分配', icon: 'documentation', affix: false, breadcrumb: false, noCache: true }
       }
     ]
   }

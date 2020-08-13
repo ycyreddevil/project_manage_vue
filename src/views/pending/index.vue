@@ -1,7 +1,6 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-link type="info" style="padding: 0px 10px">所有</el-link>
       <el-link type="info" style="padding: 0px 10px">待处理</el-link>
       <el-link type="info" style="padding: 0px 10px">已处理</el-link>
       <el-link type="info" style="padding: 0px 10px">已提交</el-link>
