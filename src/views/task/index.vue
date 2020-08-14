@@ -203,7 +203,6 @@ export default {
         if (res.code === 200) {
           this.total = res.total
           this.list = JSON.parse(res.result)
-          console.log(this.list)
         } else {
           this.$message({
             message: res.message,
