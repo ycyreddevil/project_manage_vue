@@ -23,10 +23,10 @@ export default {
     ])
   },
   created() {
-    const _role = this.roles.map(item => { return item.name })
-    if (!_role.includes('admin')) {
-      this.currentRole = 'editorDashboard'
-    }
+    // const _role = this.roles.map(item => { return item.name })
+    // if (!_role.includes('admin')) {
+    //   this.currentRole = 'editorDashboard'
+    // }
   }
 }
 </script>
