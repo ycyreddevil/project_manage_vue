@@ -6,25 +6,9 @@
     <div style="position:relative;">
       <pan-thumb :image="avatar" class="panThumb" />
       <mallki class-name="mallki-text" text="余昌运" />
-      <div style="padding-top:35px;" class="progress-item">
-        <span>全自动核酸提取工作站</span>
-        <el-progress :percentage="70" />
-      </div>
-      <div class="progress-item">
-        <span>液基薄层细胞制片机OEM</span>
-        <el-progress :percentage="18" />
-      </div>
-      <div class="progress-item">
-        <span>液基寄生虫前处理系统</span>
-        <el-progress :percentage="12" />
-      </div>
-      <div class="progress-item">
-        <span>寄生虫卵试剂盒一代技改项目</span>
-        <el-progress :percentage="100" status="success" />
-      </div>
-      <div class="progress-item">
-        <span>全自动核酸提取工作站</span>
-        <el-progress :percentage="12" />
+      <div v-for="(temp,index) in list" :key="index" style="padding-top:35px;" class="progress-item">
+        <span>{{ temp.name }}</span>
+        <el-progress :percentage="temp.complete_ratio" />
       </div>
     </div>
   </el-card>
@@ -34,10 +18,10 @@
 import { mapGetters } from 'vuex'
 import PanThumb from '@/components/PanThumb'
 import Mallki from '@/components/TextHoverEffect/Mallki'
+import { getProjectAnalyse } from '@/api/dashboard'
 
 export default {
   components: { PanThumb, Mallki },
-
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -52,7 +36,30 @@ export default {
       statisticsData: {
         article_count: 1024,
         pageviews_count: 1024
-      }
+      },
+      list: []
+    }
+  },
+  mounted() {
+    this.fetchData()
+  },
+  methods: {
+    fetchData() {
+      getProjectAnalyse().then(res => {
+        if (res.code === 200) {
+          this.list = res.result
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'error'
+          })
+        }
+      }).catch(res => {
+        this.$message({
+          message: res,
+          type: 'error'
+        })
+      })
     }
   },
   computed: {

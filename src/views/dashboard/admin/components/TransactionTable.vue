@@ -3,9 +3,17 @@
     <el-table :data="list">
       <el-table-column prop="name" label="项目" />
       <el-table-column prop="code" label="编号" />
-      <el-table-column prop="perfect" label="完成率" />
-      <el-table-column prop="last" label="消耗" />
-      <el-table-column prop="taskNum" label="任务数" />
+      <el-table-column label="完成率">
+        <template slot-scope="{row}">
+          <span>{{ row.complete_ratio }}%</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="消耗">
+        <template slot-scope="{row}">
+          <span>{{ row.day }}天</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="task_num" label="任务数" />
     </el-table>
   </el-row>
 <!--  <el-table :data="list" style="width: 100%;padding-top: 15px;">-->
@@ -30,7 +38,7 @@
 </template>
 
 <script>
-import { transactionList } from '@/api/remote-search'
+import { getProjectAnalyse } from '@/api/dashboard'
 export default {
   components: {
   },
@@ -48,25 +56,31 @@ export default {
   },
   data() {
     return {
-      list: [
-        { name: '全自动核酸提取工作站', code: 'YL-YQ-201807', perfect: '56%', taskNum: 20, last: '10h' },
-        { name: '液基薄层细胞制片机OEM', code: 'YL-YQ-201804', perfect: '20%', taskNum: 30, last: '10h' },
-        { name: '液基寄生虫前处理系统', code: 'YL-SB-201701', perfect: '100%', taskNum: 70, last: '10h' },
-        { name: '寄生虫卵试剂盒一代技改项目（星火）', code: 'YL-XH3-1901', perfect: '16%', taskNum: 80, last: '10h' },
-        { name: '全自动核酸提取工作站', code: 'YL-YQ-201807', perfect: '56%', taskNum: 20, last: '10h' },
-        { name: '液基薄层细胞制片机OEM', code: 'YL-YQ-201804', perfect: '20%', taskNum: 30, last: '10h' },
-        { name: '液基寄生虫前处理系统', code: 'YL-SB-201701', perfect: '100%', taskNum: 70, last: '10h' },
-        { name: '寄生虫卵试剂盒一代技改项目（星火）', code: 'YL-XH3-1901', perfect: '16%', taskNum: 80, last: '10h' }
-      ]
+      list: []
     }
   },
   created() {
     // this.fetchData()
   },
+  mounted() {
+    this.fetchData()
+  },
   methods: {
     fetchData() {
-      transactionList().then(response => {
-        this.list = response.data.items.slice(0, 8)
+      getProjectAnalyse().then(res => {
+        if (res.code === 200) {
+          this.list = res.result
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'error'
+          })
+        }
+      }).catch(res => {
+        this.$message({
+          message: res,
+          type: 'error'
+        })
       })
     },
     setData(dataTransfer) {

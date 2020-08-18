@@ -2,7 +2,7 @@
   <section class="todoapp">
     <!-- header -->
     <header class="header">
-      <input class="new-todo" autocomplete="off" placeholder="待办事项" @keyup.enter="addTodo">
+      <input class="new-todo" autocomplete="off" placeholder="新增待办事项" @keyup.enter="addTodo">
     </header>
     <!-- main section -->
     <section v-show="todos.length" class="main">
@@ -23,51 +23,44 @@
     <footer v-show="todos.length" class="footer">
       <span class="todo-count">
         <strong>{{ remaining }}</strong>
-        {{ remaining | pluralize('item') }} left
+        {{ remaining | pluralize('项') }} 剩余
       </span>
       <ul class="filters">
         <li v-for="(val, key) in filters" :key="key">
           <a :class="{ selected: visibility === key }" @click.prevent="visibility = key">{{ key | capitalize }}</a>
         </li>
       </ul>
-      <!-- <button class="clear-completed" v-show="todos.length > remaining" @click="clearCompleted">
-        Clear completed
-      </button> -->
     </footer>
   </section>
 </template>
 
 <script>
 import Todo from './Todo.vue'
-
+import { addOrUpdateSchedule, getSchedule, deleteSchedule } from '@/api/dashboard'
 const STORAGE_KEY = 'todos'
 const filters = {
-  all: todos => todos,
-  active: todos => todos.filter(todo => !todo.done),
-  completed: todos => todos.filter(todo => todo.done)
+  全部: todos => todos,
+  进行中: todos => todos.filter(todo => !todo.done),
+  完成: todos => todos.filter(todo => todo.done)
 }
-const defalutList = [
-  { text: '立项', done: true },
-  { text: '设计文档编写', done: true },
-  { text: '数据库设计', done: true },
-  { text: '系统框架搭建', done: true },
-  { text: '前端页面开发', done: false },
-  { text: '后端接口开发', done: false },
-  { text: '前后端联调', done: false },
-  { text: '系统测试', done: false }
-]
 export default {
   components: { Todo },
   filters: {
-    pluralize: (n, w) => n === 1 ? w : w + 's',
+    pluralize: (n, w) => w,
     capitalize: s => s.charAt(0).toUpperCase() + s.slice(1)
   },
   data() {
     return {
-      visibility: 'all',
+      visibility: '全部',
       filters,
-      // todos: JSON.parse(window.localStorage.getItem(STORAGE_KEY)) || defalutList
-      todos: defalutList
+      todos: [],
+      schedule: {
+        id: undefined,
+        text: '',
+        done: 0,
+        submitterUserId: this.$store.getters.userId
+      },
+      list: []
     }
   },
   computed: {
@@ -81,32 +74,136 @@ export default {
       return this.todos.filter(todo => !todo.done).length
     }
   },
+  mounted() {
+    getSchedule().then(res => {
+      if (res.code === 200) {
+        this.todos = JSON.parse(res.result)
+      } else {
+        this.$message({
+          message: res.message,
+          type: 'error'
+        })
+      }
+    }).catch(res => {
+      this.$message({
+        message: res,
+        type: 'error'
+      })
+    })
+  },
   methods: {
     setLocalStorage() {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(this.todos))
     },
     addTodo(e) {
       const text = e.target.value
-      if (text.trim()) {
-        this.todos.push({
-          text,
-          done: false
+      this.schedule.text = text
+      addOrUpdateSchedule(this.schedule).then(res => {
+        if (res.code === 200) {
+          if (text.trim()) {
+            this.todos.push({
+              text,
+              done: false
+            })
+            this.setLocalStorage()
+          }
+          e.target.value = ''
+          this.$message({
+            message: '新增成功',
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'error'
+          })
+        }
+      }).catch(res => {
+        this.$message({
+          message: res,
+          type: 'error'
         })
-        this.setLocalStorage()
-      }
-      e.target.value = ''
+      })
     },
-    toggleTodo(val) {
-      val.done = !val.done
-      this.setLocalStorage()
+    toggleTodo(todo) {
+      todo.done = !todo.done
+      todo.done = todo.done ? 1 : 0
+      addOrUpdateSchedule(todo).then(res => {
+        if (res.code === 200) {
+          this.setLocalStorage()
+          this.$message({
+            message: '修改状态成功',
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'error'
+          })
+        }
+      }).catch(res => {
+        this.$message({
+          message: res,
+          type: 'error'
+        })
+      })
     },
     deleteTodo(todo) {
-      this.todos.splice(this.todos.indexOf(todo), 1)
-      this.setLocalStorage()
+      this.$confirm('是否删除该事项', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        console.log(todo)
+        deleteSchedule({ id: todo.id }).then(res => {
+          if (res.code === 200) {
+            this.$message({
+              message: '删除成功',
+              type: 'success'
+            })
+            this.todos.splice(this.todos.indexOf(todo), 1)
+            this.setLocalStorage()
+          } else {
+            this.$message({
+              message: res.message,
+              type: 'error'
+            })
+          }
+        }).catch(res => {
+          this.$message({
+            message: res,
+            type: 'error'
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
     },
     editTodo({ todo, value }) {
       todo.text = value
-      this.setLocalStorage()
+      todo.done = todo.done ? 1 : 0
+      addOrUpdateSchedule(todo).then(res => {
+        if (res.code === 200) {
+          this.setLocalStorage()
+          this.$message({
+            message: '编辑成功',
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'error'
+          })
+        }
+      }).catch(res => {
+        this.$message({
+          message: res,
+          type: 'error'
+        })
+      })
     },
     clearCompleted() {
       this.todos = this.todos.filter(todo => !todo.done)

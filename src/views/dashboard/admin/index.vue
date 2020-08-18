@@ -81,6 +81,8 @@ export default {
       lineChartData: lineChartData.newVisitis
     }
   },
+  mounted() {
+  },
   methods: {
     handleSetLineChartData(type) {
       this.lineChartData = lineChartData[type]

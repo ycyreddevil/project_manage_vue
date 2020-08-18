@@ -1,20 +1,20 @@
 <template>
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
+      <div class="card-panel" @click="jumpPage('/pending/index')">
         <div class="card-panel-icon-wrapper icon-people">
           <svg-icon icon-class="guide" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            待办事项
+            待审批
           </div>
-          <count-to :start-val="0" :end-val="12" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="countMap.toBePendingNum" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('messages')">
+      <div class="card-panel" @click="jumpPage('/project/index')">
         <div class="card-panel-icon-wrapper icon-message">
           <svg-icon icon-class="project" class-name="card-panel-icon" />
         </div>
@@ -22,12 +22,12 @@
           <div class="card-panel-text">
             我的项目
           </div>
-          <count-to :start-val="0" :end-val="6" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="countMap.myProjectNum" :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('purchases')">
+      <div class="card-panel" @click="jumpPage('/task/index')">
         <div class="card-panel-icon-wrapper icon-money">
           <svg-icon icon-class="task" class-name="card-panel-icon" />
         </div>
@@ -35,12 +35,12 @@
           <div class="card-panel-text">
             我的任务
           </div>
-          <count-to :start-val="0" :end-val="2" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="countMap.myTaskNum" :duration="3200" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('shoppings')">
+      <div class="card-panel" @click="jumpPage('/message/index')">
         <div class="card-panel-icon-wrapper icon-message">
           <svg-icon icon-class="message" class-name="card-panel-icon" />
         </div>
@@ -48,7 +48,7 @@
           <div class="card-panel-text">
             我的消息
           </div>
-          <count-to :start-val="0" :end-val="8" :duration="3600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="countMap.toBeReplied" :duration="3600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -57,14 +57,37 @@
 
 <script>
 import CountTo from 'vue-count-to'
+import { getDashboardPendingNum } from '@/api/dashboard'
 
 export default {
   components: {
     CountTo
   },
+  data() {
+    return {
+      countMap: {}
+    }
+  },
+  mounted() {
+    getDashboardPendingNum().then(res => {
+      if (res.code === 200) {
+        this.countMap = res.result
+      } else {
+        this.$message({
+          message: res.message,
+          type: 'error'
+        })
+      }
+    }).catch(res => {
+      this.$message({
+        message: res,
+        type: 'error'
+      })
+    })
+  },
   methods: {
-    handleSetLineChartData(type) {
-      this.$emit('handleSetLineChartData', type)
+    jumpPage(path) {
+      this.$router.push(path)
     }
   }
 }

@@ -16,10 +16,10 @@ export function getHaveReplied(data) {
   })
 }
 
-export function quickComment(parmas) {
+export function quickComment(params) {
   return request({
     url: '/message/quickComment',
     method: 'post',
-    parmas
+    params
   })
 }
