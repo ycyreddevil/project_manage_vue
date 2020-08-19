@@ -5,7 +5,7 @@
     </div>
     <div style="position:relative;">
       <pan-thumb :image="avatar" class="panThumb" />
-      <mallki class-name="mallki-text" text="余昌运" />
+      <mallki class-name="mallki-text" :text="name" />
       <div v-for="(temp,index) in list" :key="index" style="padding-top:35px;" class="progress-item">
         <span>{{ temp.name }}</span>
         <el-progress :percentage="temp.complete_ratio" />

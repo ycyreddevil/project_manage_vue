@@ -8,12 +8,17 @@
           <span>{{ row.complete_ratio }}%</span>
         </template>
       </el-table-column>
-      <el-table-column label="消耗">
+      <el-table-column label="已消耗">
         <template slot-scope="{row}">
           <span>{{ row.day }}天</span>
         </template>
       </el-table-column>
-      <el-table-column prop="task_num" label="任务数" />
+      <el-table-column label="预计">
+        <template slot-scope="{row}">
+          <span>{{ row.estimate }}天</span>
+        </template>
+      </el-table-column>
+      <!--      <el-table-column prop="task_num" label="任务数" />-->
     </el-table>
   </el-row>
 <!--  <el-table :data="list" style="width: 100%;padding-top: 15px;">-->

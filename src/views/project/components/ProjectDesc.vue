@@ -5,7 +5,7 @@
         <el-row type="flex" justify="space-around">
           <el-col :span="11" style="overflow-y: auto">
             <div class="chart-wrapper">
-              <bar-chart />
+              <project-burn-out-chart :project-id="projectId" />
             </div>
           </el-col>
           <el-col :span="11" style="overflow-y: auto">
@@ -37,12 +37,12 @@
 import ProjectHistorySimple from '@/views/project/components/ProjectHistorySimple'
 import ProjectMemberSimple from '@/views/project/components/ProjectMemberSimple'
 import ProjectDynamicSimple from '@/views/project/components/ProjectDynamicSimple'
-import BarChart from '@/views/dashboard/admin/components/BarChart'
 import DetailContent from '@/views/project/components/DetailContent'
+import ProjectBurnOutChart from '@/views/project/components/ProjectBurnOutChart'
 
 export default {
   name: 'ProjectDesc',
-  components: { ProjectHistorySimple, ProjectMemberSimple, ProjectDynamicSimple, BarChart, DetailContent },
+  components: { ProjectHistorySimple, ProjectMemberSimple, ProjectDynamicSimple, DetailContent, ProjectBurnOutChart },
   props: {
     projectId: {
       type: String,

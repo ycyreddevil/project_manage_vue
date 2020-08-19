@@ -4,6 +4,7 @@
 
 <script>
 import echarts from 'echarts'
+import { getProjectTaskRatio } from '@/api/dashboard'
 require('echarts/theme/macarons') // echarts theme
 import resize from './mixins/resize'
 
@@ -42,39 +43,46 @@ export default {
   },
   methods: {
     initChart() {
-      this.chart = echarts.init(this.$el, 'macarons')
-
-      this.chart.setOption({
-        tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b} : {c} ({d}%)'
-        },
-        title: {
-          text: '项目占比'
-        },
-        legend: {
-          left: 'center',
-          bottom: '10',
-          data: ['项目1', '项目2', '项目3', '项目4', '项目5']
-        },
-        series: [
-          {
-            name: 'WEEKLY WRITE ARTICLES',
-            type: 'pie',
-            roseType: 'radius',
-            radius: [15, 95],
-            center: ['50%', '38%'],
-            data: [
-              { value: 320, name: '项目1' },
-              { value: 240, name: '项目2' },
-              { value: 149, name: '项目3' },
-              { value: 100, name: '项目4' },
-              { value: 59, name: '项目5' }
-            ],
-            animationEasing: 'cubicInOut',
-            animationDuration: 2600
-          }
-        ]
+      getProjectTaskRatio().then(res => {
+        if (res.code === 200) {
+          const data = res.result
+          this.chart = echarts.init(this.$el, 'macarons')
+          this.chart.setOption({
+            tooltip: {
+              trigger: 'item',
+              formatter: '{b} : {c}个 ({d}%)'
+            },
+            title: {
+              text: '项目任务占比'
+            },
+            legend: {
+              left: 'center',
+              bottom: '10',
+              data: data.map(item => { return item.name })
+            },
+            series: [
+              {
+                type: 'pie',
+                roseType: 'radius',
+                radius: [15, 95],
+                center: ['50%', '38%'],
+                data: data,
+                animationEasing: 'cubicInOut',
+                animationDuration: 2600
+              }
+            ]
+          })
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'error'
+          })
+        }
+      }).catch(res => {
+        this.$message({
+          message: res,
+          type: 'error'
+        })
       })
     }
   }

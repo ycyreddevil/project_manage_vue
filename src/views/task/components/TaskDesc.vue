@@ -5,7 +5,7 @@
         <el-row type="flex" justify="space-around">
           <el-col :span="11" style="overflow-y: auto">
             <div class="chart-wrapper">
-              <bar-chart />
+              <task-burn-out-chart :task-id="taskId" />
             </div>
           </el-col>
           <el-col :span="11" style="overflow-y: auto">
@@ -35,14 +35,14 @@
 </template>
 <script>
 import TaskDynamicSimple from '@/views/task/components/TaskDynamicSimple'
-import BarChart from '@/views/dashboard/admin/components/BarChart'
 import DetailContent from '@/views/task/components/DetailContent'
 import TaskBudgetSimple from '@/views/task/components/TaskBudgetSimple'
 import TaskHistorySimple from '@/views/task/components/TaskHistorySimple'
+import TaskBurnOutChart from '@/views/task/components/TaskBurnOutChart'
 
 export default {
   name: 'TaskDesc',
-  components: { TaskHistorySimple, TaskBudgetSimple, BarChart, DetailContent, TaskDynamicSimple },
+  components: { TaskHistorySimple, TaskBudgetSimple, TaskBurnOutChart, DetailContent, TaskDynamicSimple },
   props: {
     taskId: {
       type: String

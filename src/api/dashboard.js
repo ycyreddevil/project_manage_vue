@@ -36,3 +36,33 @@ export function deleteSchedule(params) {
     params
   })
 }
+
+export function getSubmissionStatus() {
+  return request({
+    url: '/dashboard/getSubmissionStatus',
+    method: 'post'
+  })
+}
+
+export function getProjectTaskRatio() {
+  return request({
+    url: '/dashboard/getProjectTaskRatio',
+    method: 'post'
+  })
+}
+
+export function getProjectBurndownChart(params) {
+  return request({
+    url: '/dashboard/getProjectBurndownChart',
+    method: 'post',
+    params
+  })
+}
+
+export function getTaskBurndownChart(params) {
+  return request({
+    url: '/dashboard/getTaskBurndownChart',
+    method: 'post',
+    params
+  })
+}
